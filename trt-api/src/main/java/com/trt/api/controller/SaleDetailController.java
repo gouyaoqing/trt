@@ -13,8 +13,8 @@ public class SaleDetailController {
     private SaleDetailImportService saleDetailImportService;
 
     @PostMapping("/sale-detal/excel")
-    public String importSaleDetailByExcel(@RequestParam("excelPath") String excelPath) {
-        saleDetailImportService.importByExcel(excelPath);
+    public String importSaleDetailByExcel(@RequestParam("excelPath") String excelPath, @RequestParam("excelName") String excelName) {
+        saleDetailImportService.importByExcel(excelPath, excelName);
         return "success";
     }
 }

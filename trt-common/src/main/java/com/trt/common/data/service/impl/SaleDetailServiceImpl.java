@@ -1,5 +1,6 @@
 package com.trt.common.data.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.SaleDetailMapper;
 import com.trt.common.data.model.SaleDetail;
@@ -20,5 +21,13 @@ public class SaleDetailServiceImpl implements SaleDetailService {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "sale detail's all id is not null");
         }
         return saleDetailMapper.insert(saleDetail);
+    }
+
+    @Override
+    public int deleteByExcelName(String excelName) {
+        SaleDetail where = new SaleDetail();
+        where.setExcel(excelName);
+        UpdateWrapper<SaleDetail> updateWrapper = new UpdateWrapper<SaleDetail>(where);
+        return saleDetailMapper.delete(updateWrapper);
     }
 }

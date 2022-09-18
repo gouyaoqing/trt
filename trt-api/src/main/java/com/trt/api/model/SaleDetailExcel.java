@@ -64,4 +64,6 @@ public class SaleDetailExcel {
      * 最小单价
      */
     private Double minPrice;
+
+    private String excel;
 }
