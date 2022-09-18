@@ -6,11 +6,14 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="trt" />
+        <module name="trt-common" />
+        <module name="trt-main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="trt" target="1.5" />
+      <module name="trt-common" target="8" />
+      <module name="trt-main" target="1.5" />
     </bytecodeTargetLevel>
   </component>
 </project>
