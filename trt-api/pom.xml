@@ -9,12 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>trt-main</artifactId>
+    <artifactId>trt-api</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.trt</groupId>
-            <artifactId>trt-api</artifactId>
+            <artifactId>trt-common</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

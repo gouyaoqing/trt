@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/trt.iml" filepath="$PROJECT_DIR$/.idea/trt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trt-api/trt-api.iml" filepath="$PROJECT_DIR$/trt-api/trt-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/trt-common/trt-common.iml" filepath="$PROJECT_DIR$/trt-common/trt-common.iml" />
       <module fileurl="file://$PROJECT_DIR$/trt-main/trt-main.iml" filepath="$PROJECT_DIR$/trt-main/trt-main.iml" />
     </modules>
