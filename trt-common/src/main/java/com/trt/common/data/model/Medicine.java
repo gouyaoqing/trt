@@ -33,6 +33,10 @@ public class Medicine {
      */
     private String specification;
     /**
+     * 原始规格
+     */
+    private String initSpecification;
+    /**
      * 单位
      */
     private String unit;

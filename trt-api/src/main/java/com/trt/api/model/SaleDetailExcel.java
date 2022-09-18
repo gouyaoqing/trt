@@ -1,8 +1,9 @@
-package com.trt.common.data.model;
+package com.trt.api.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.trt.common.data.model.Custom;
+import com.trt.common.data.model.Dealer;
+import com.trt.common.data.model.Medicine;
+import com.trt.common.data.model.MedicineBatch;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -10,28 +11,23 @@ import java.util.Date;
 
 @Data
 @Accessors(chain = true)
-@TableName("sale_detail")
-/**
- * 销售明细
- */
-public class SaleDetail {
+public class SaleDetailExcel {
     /**
-     * id
+     * 经销商信息
      */
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Dealer dealer;
     /**
-     * 经销商id
+     * 客户信息
      */
-    private Long dealerId;
+    private Custom custom;
     /**
-     * 客户id
+     * 药品信息
      */
-    private Long CustomId;
+    private Medicine medicine;
     /**
-     * 药品批次id
+     * 药品批次信息
      */
-    private Long medicineBatchId;
+    private MedicineBatch medicineBatch;
     /**
      * 销售日期
      */
@@ -68,12 +64,4 @@ public class SaleDetail {
      * 最小单价
      */
     private Double minPrice;
-    /**
-     * 状态
-     */
-    private Integer status;
-    /**
-     * 创建时间
-     */
-    private Date createTime;
 }

@@ -16,6 +16,8 @@
     </modules>
 
     <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <revision>1.0.0-${changelist}</revision>
         <changelist>SNAPSHOT</changelist>
         <lombok.version>1.18.16</lombok.version>
@@ -23,6 +25,8 @@
         <spring-boot.version>2.4.1</spring-boot.version>
         <slf4j.version>1.7.30</slf4j.version>
         <commons-lang3.version>3.11</commons-lang3.version>
+        <poi.version>3.9</poi.version>
+        <fastjson.version>1.2.83</fastjson.version>
     </properties>
 
     <dependencyManagement>
@@ -89,11 +93,16 @@
             </dependency>
 
             <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version></version>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi-ooxml</artifactId>
+                <version>${poi.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

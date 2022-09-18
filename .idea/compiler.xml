@@ -13,10 +13,10 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="trt" target="1.5" />
-      <module name="trt-api" target="1.5" />
+      <module name="trt" target="8" />
+      <module name="trt-api" target="8" />
       <module name="trt-common" target="8" />
-      <module name="trt-main" target="1.5" />
+      <module name="trt-main" target="8" />
     </bytecodeTargetLevel>
   </component>
 </project>
