@@ -19,8 +19,8 @@ public class MedicineBatchServiceImpl implements MedicineBatchService {
 
     @Override
     public int getOrInsert(MedicineBatch medicineBatch) throws BusinessException {
-        if (StringUtils.isBlank(medicineBatch.getLotNumber()) || medicineBatch.getMedicineId() == null) {
-            throw new BusinessException(HttpStatus.BAD_REQUEST, "medicine batch's medicine is or lot number is not null");
+        if (medicineBatch.getMedicineId() == null) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "medicine batch's medicine id is not null");
         }
 
         if (StringUtils.isBlank(medicineBatch.getLotNumber())) {
