@@ -1,0 +1,10 @@
+.*
+!.gitignore
+!.gitlab-ci.yml
+*.iml
+target/
+*.bin
+*.log
+launch.sh
+dependency-reduced-pom.xml
+.idea/
