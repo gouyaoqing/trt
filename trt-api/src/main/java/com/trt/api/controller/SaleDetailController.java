@@ -14,14 +14,6 @@ public class SaleDetailController {
 
     @PostMapping("/sale-detal/excel")
     public String importSaleDetailByExcel() {
-        Dealer dealer = new Dealer();
-        dealer.setCode("aaa");
-        dealer.setName("bbb");
-        dealer.setLevel(1);
-        dealer.setArea("ccc");
-        dealer.setProvince("ddd");
-        dealer.setCity("eee");
-        dealerService.insert(dealer);
         return "success";
     }
 }

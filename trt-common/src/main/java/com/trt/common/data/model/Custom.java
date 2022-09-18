@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 import java.util.Date;
 
 @Data
-@Accessors
+@Accessors(chain = true)
 @TableName("custom")
 /**
  * 客户

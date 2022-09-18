@@ -9,7 +9,7 @@ import lombok.experimental.Accessors;
 import java.util.Date;
 
 @Data
-@Accessors
+@Accessors(chain = true)
 @TableName("medicine_batch")
 /**
  * 药品批号
