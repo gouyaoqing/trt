@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 
 @Service
 public class MedicineBatchServiceImpl implements MedicineBatchService {
+    private static final String DEFAULT_LOT_NUM = "00000000";
     @Resource
     private MedicineBatchMapper medicineBatchMapper;
 
@@ -20,6 +21,10 @@ public class MedicineBatchServiceImpl implements MedicineBatchService {
     public int getOrInsert(MedicineBatch medicineBatch) throws BusinessException {
         if (StringUtils.isBlank(medicineBatch.getLotNumber()) || medicineBatch.getMedicineId() == null) {
             throw new BusinessException(HttpStatus.BAD_REQUEST, "medicine batch's medicine is or lot number is not null");
+        }
+
+        if (StringUtils.isBlank(medicineBatch.getLotNumber())) {
+            medicineBatch.setLotNumber(DEFAULT_LOT_NUM);
         }
 
         QueryWrapper<MedicineBatch> wrapper = new QueryWrapper<MedicineBatch>(new MedicineBatch().setMedicineId(medicineBatch.getMedicineId()).setLotNumber(medicineBatch.getLotNumber()));
