@@ -2,7 +2,6 @@ package com.trt.api.service.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
-import com.alibaba.fastjson.JSON;
 import com.trt.api.model.ExcelDemo;
 import com.trt.api.model.SaleDetailExcel;
 import com.trt.api.service.SaleDetailImportService;
