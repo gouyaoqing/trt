@@ -61,7 +61,8 @@ public class InitCompanyCodeController {
                     }
 
                     String industry = sheetRow.getCell(12).getStringCellValue();
-                    String societyCode = sheetRow.getCell(13).getStringCellValue();
+                    String usedName = sheetRow.getCell(13).getStringCellValue();
+                    String societyCode = sheetRow.getCell(14).getStringCellValue();
                     String taxesCode = sheetRow.getCell(15).getStringCellValue();
                     String registerCode = sheetRow.getCell(16).getStringCellValue();
                     String organizationCode = sheetRow.getCell(17).getStringCellValue();
@@ -69,6 +70,7 @@ public class InitCompanyCodeController {
 
                     if (custom == null) {
                         if (parse(industry) == null
+                                && parse(usedName) == null
                                 && parse(societyCode) == null
                                 && parse(taxesCode) == null
                                 && parse(registerCode) == null
@@ -82,6 +84,7 @@ public class InitCompanyCodeController {
                     }
                     //update
                     custom.setIndustry(parse(industry))
+                            .setUsedName(usedName)
                             .setSocietyCode(parse(societyCode))
                             .setTaxesCode(parse(taxesCode))
                             .setRegisterCode(parse(registerCode))
@@ -89,6 +92,7 @@ public class InitCompanyCodeController {
                             .setAddress(parse(address));
 
                     if (custom.getIndustry() == null
+                            && custom.getUsedName() == null
                             && custom.getSocietyCode() == null
                             && custom.getTaxesCode() == null
                             && custom.getRegisterCode() == null

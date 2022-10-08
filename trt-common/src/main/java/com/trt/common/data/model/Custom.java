@@ -49,6 +49,10 @@ public class Custom {
      */
     private String societyCode;
     /**
+     * 曾用名
+     */
+    private String usedName;
+    /**
      * 纳税人识别号
      */
     private String taxesCode;
