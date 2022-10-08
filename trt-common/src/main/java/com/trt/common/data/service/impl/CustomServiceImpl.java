@@ -1,6 +1,8 @@
 package com.trt.common.data.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.CustomMapper;
 import com.trt.common.data.model.Custom;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class CustomServiceImpl implements CustomService {
@@ -30,5 +33,25 @@ public class CustomServiceImpl implements CustomService {
         }
 
         return customMapper.insert(custom);
+    }
+
+    @Override
+    public List<Custom> findAll() {
+        QueryWrapper<Custom> wrapper = new QueryWrapper<>();
+        return customMapper.selectList(wrapper);
+    }
+
+    @Override
+    public int updateExcelInfo(Custom custom) {
+        UpdateWrapper<Custom> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", custom.getId());
+        wrapper.set("industry", custom.getIndustry());
+        wrapper.set("society_code", custom.getSocietyCode());
+        wrapper.set("register_code", custom.getRegisterCode());
+        wrapper.set("organization_code", custom.getOrganizationCode());
+        wrapper.set("address", custom.getAddress());
+        wrapper.set("taxes_code", custom.getTaxesCode());
+
+        return customMapper.update(custom, wrapper);
     }
 }

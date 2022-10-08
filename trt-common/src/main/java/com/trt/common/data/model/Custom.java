@@ -41,6 +41,30 @@ public class Custom {
      */
     private String city;
     /**
+     * 所属行业
+     */
+    private String industry;
+    /**
+     * 统一社会信用代码
+     */
+    private String societyCode;
+    /**
+     * 纳税人识别号
+     */
+    private String taxesCode;
+    /**
+     * 注册号
+     */
+    private String registerCode;
+    /**
+     * 组织机构代码
+     */
+    private String organizationCode;
+    /**
+     * 地址
+     */
+    private String address;
+    /**
      * 状态
      */
     private Integer status;
