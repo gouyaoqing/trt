@@ -93,7 +93,8 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
                                 .setProvince(demoData.getCustomProvince())
                                 .setCity(demoData.getCustomCity())
                                 .setCode(demoData.getCustomCode())
-                                .setName(demoData.getCustomName());
+                                .setName(demoData.getCustomName())
+                                .setBusinessType(demoData.getBusinessType());
                         saleDetailExcel.setCustom(custom);
 
                         MedicineBatch medicineBatch = new MedicineBatch();

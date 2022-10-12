@@ -2,6 +2,7 @@ package com.trt.common.data.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.CustomMapper;
@@ -29,6 +30,13 @@ public class CustomServiceImpl implements CustomService {
         Custom dbCustom = customMapper.selectOne(wrapper);
         if (dbCustom != null) {
             custom.setId(dbCustom.getId());
+
+            if (custom.getBusinessType() != null) {
+                UpdateWrapper<Custom> updateWrapper = new UpdateWrapper();
+                updateWrapper.eq("id", custom.getId());
+                updateWrapper.set("business_type", custom.getBusinessType());
+                customMapper.update(dbCustom, updateWrapper);
+            }
             return 1;
         }
 

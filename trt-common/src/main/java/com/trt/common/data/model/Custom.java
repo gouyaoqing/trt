@@ -76,4 +76,8 @@ public class Custom {
      * 创建时间
      */
     private Date createTime;
+    /**
+     * 商业属性
+     */
+    private String businessType;
 }
