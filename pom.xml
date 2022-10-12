@@ -27,6 +27,8 @@
         <commons-lang3.version>3.11</commons-lang3.version>
         <poi.version>3.9</poi.version>
         <fastjson.version>1.2.83</fastjson.version>
+        <httpcore.version>4.4.14</httpcore.version>
+        <httpclient.version>4.5.13</httpclient.version>
     </properties>
 
     <dependencyManagement>
@@ -92,16 +94,28 @@
                 <version>8.0.30</version>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>org.apache.poi</groupId>-->
-<!--                <artifactId>poi-ooxml</artifactId>-->
-<!--                <version>${poi.version}</version>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.apache.poi</groupId>-->
+            <!--                <artifactId>poi-ooxml</artifactId>-->
+            <!--                <version>${poi.version}</version>-->
+            <!--            </dependency>-->
 
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcore.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpclient.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

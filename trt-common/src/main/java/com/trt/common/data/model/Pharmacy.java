@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Date;
 
 /**
  * 药店
@@ -34,7 +35,11 @@ public class Pharmacy {
      */
     private String address;
     /**
-     * 连锁店、单体店
+     * 单体店，连锁店
+     */
+    private String groupCompanyType;
+    /**
+     * 院边店
      */
     private String type;
     /**
@@ -60,11 +65,11 @@ public class Pharmacy {
     /**
      * 药店通的药店id
      */
-    private String storyId;
+    private String storeId;
     /**
-     * 三甲医院-北京协和医院 不知道是啥
+     * 三甲医院-北京协和医院 周边重点建筑
      */
-    private String special;
+    private String aroundSpecial;
     /**
      * 级别
      */
@@ -77,4 +82,33 @@ public class Pharmacy {
      * 街道
      */
     private String street;
+    /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    private String storeArea;
+    /**
+     *
+     */
+    private Integer aroundBusinessCount;
+    /**
+     * 周边居民区数量
+     */
+    private Integer aroundCommunityCount;
+    /**
+     *
+     */
+    private Integer aroundDistanceCount;
+    /**
+     * 周边医院数量
+     */
+    private Integer aroundHospitalCount;
+
+    private Integer aroundIndustryCount;
+    /**
+     * 周边商业区数量
+     */
+    private Integer aroundOfficeCount;
+
 }

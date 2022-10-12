@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.Date;
+
 /**
  * 连锁店
  *
@@ -25,5 +27,8 @@ public class GroupCompany {
      * 公司名称
      */
     private String name;
-
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }
