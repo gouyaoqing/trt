@@ -46,16 +46,27 @@ public class PharmacyCompanyServiceImpl implements PharmacyCompanyService {
         List<String> cities = getAllCities(token);
         int pageSize = 500;
         String city = cities.get(cityNum);
+        int currPage = pageNum <= 0 ? 1 : pageNum;
+        List<Pair<GroupCompany, Pharmacy>> list = Lists.newArrayList();
 
         do {
-            List<Pair<GroupCompany, Pharmacy>> list = getPharmacies(pageNum, pageSize, city, token);
-            list.forEach(pair -> pharmacyService.getOrInsert(pair.getValue(), pair.getKey()));
+            try {
+                list = getPharmacies(currPage, pageSize, city, token);
+                list.forEach(pair -> pharmacyService.getOrInsert(pair.getValue(), pair.getKey()));
 
-            log.error("{} 的第{}页已完成", city, pageNum);
-
-            if (list.size() < pageSize) {
-                break;
+                log.error("第{}个城市 {} 的第{}页已完成", cityNum, city, currPage);
+                currPage++;
+                if (list.size() < pageSize) {
+                    break;
+                }
+            } catch (Exception e) {
+                log.error("*******************第{}个城市 {} 的第{}页异常*****************", cityNum, city, currPage, e);
+            } finally {
+//                if (list.size() < pageSize) {
+//                    break;
+//                }
             }
+
         } while (true);
 
         log.error("{} 已全部完成", city);

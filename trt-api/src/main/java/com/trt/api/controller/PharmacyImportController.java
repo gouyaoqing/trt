@@ -13,7 +13,7 @@ public class PharmacyImportController {
     private PharmacyCompanyService pharmacyCompanyService;
 
     @PostMapping("/pharmacy/import")
-    public String importPharmacyByNet(@RequestParam("city_num") Integer cityNum, @RequestParam("pageNum") Integer pageNum, @RequestParam("token") String token) {
+    public String importPharmacyByNet(@RequestParam("cityNum") Integer cityNum, @RequestParam("pageNum") Integer pageNum, @RequestParam("token") String token) {
         pharmacyCompanyService.importPharmacyByNet(cityNum, pageNum, token);
         return "success";
     }
