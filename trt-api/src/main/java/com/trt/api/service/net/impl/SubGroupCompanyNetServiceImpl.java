@@ -63,6 +63,8 @@ public class SubGroupCompanyNetServiceImpl implements SubGroupCompanyNetService 
                     subGroupCompany.setStoreNum(content.getInteger("storeNum"));
                     subGroupCompany.setTotalMarketPotential(content.getInteger("totalMarketPotential"));
                 }
+            } else {
+                log.error(JSON.parseObject(response).getString("msg"));
             }
 
         } catch (Exception e) {
