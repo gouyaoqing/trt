@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author gouyaoqing
@@ -34,5 +35,10 @@ public class GroupCompanyServiceImpl implements GroupCompanyService {
         }
 
         return groupCompanyMapper.insert(groupCompany);
+    }
+
+    @Override
+    public List<GroupCompany> findAll() {
+        return groupCompanyMapper.selectList(new QueryWrapper<>());
     }
 }

@@ -48,28 +48,33 @@ public class PharmacyCompanyServiceImpl implements PharmacyCompanyService {
         String city = cities.get(cityNum);
         int currPage = pageNum <= 0 ? 1 : pageNum;
         List<Pair<GroupCompany, Pharmacy>> list = Lists.newArrayList();
+        for (int i = 84; i <= cities.size(); i++) {
+            city = cities.get(i);
+            cityNum = i;
+            currPage = 1;
+            do {
+                try {
+                    list = getPharmacies(currPage, pageSize, city, token);
+                    list.forEach(pair -> pharmacyService.getOrInsert(pair.getValue(), pair.getKey()));
 
-        do {
-            try {
-                list = getPharmacies(currPage, pageSize, city, token);
-                list.forEach(pair -> pharmacyService.getOrInsert(pair.getValue(), pair.getKey()));
-
-                log.error("第{}个城市 {} 的第{}页已完成", cityNum, city, currPage);
-                currPage++;
-                if (list.size() < pageSize) {
-                    break;
-                }
-            } catch (Exception e) {
-                log.error("*******************第{}个城市 {} 的第{}页异常*****************", cityNum, city, currPage, e);
-            } finally {
+                    log.error("第{}个城市 {} 的第{}页已完成", cityNum, city, currPage);
+                    currPage++;
+                    if (list.size() < pageSize) {
+                        break;
+                    }
+                } catch (Exception e) {
+                    log.error("*******************第{}个城市 {} 的第{}页异常*****************", cityNum, city, currPage, e);
+                } finally {
 //                if (list.size() < pageSize) {
 //                    break;
 //                }
-            }
+                }
 
-        } while (true);
+            } while (true);
+            log.error("{} 已全部完成", city);
+        }
 
-        log.error("{} 已全部完成", city);
+
     }
 
     private List<String> getAllCities(String token) {
