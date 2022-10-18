@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.trt.api.service.net.SubGroupCompanyNetService;
+import com.trt.common.data.model.GroupCompany;
 import com.trt.common.data.model.SubGroupCompany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +30,7 @@ import static com.trt.api.service.impl.PharmacyCompanyServiceImpl.DEFAULT_ENCODE
 @Slf4j
 public class SubGroupCompanyNetServiceImpl implements SubGroupCompanyNetService {
     @Override
-    public List<SubGroupCompany> getByGroupCompany(String groupCompanyName, String token) {
+    public List<SubGroupCompany> getByGroupCompany(GroupCompany groupCompany, String token) {
         String url = "https://ydt.sinohealth.com/pharmacy-center/data/chain/portrait/getChildChnPage";
 
         List<SubGroupCompany> results = Lists.newArrayList();
@@ -38,7 +39,7 @@ public class SubGroupCompanyNetServiceImpl implements SubGroupCompanyNetService 
         try {
             HttpPost httpPost = new HttpPost(url);
             httpPost.setConfig(requestConfig);
-            httpPost.setEntity(new StringEntity(JSON.toJSONString(new SubGroupCompanyQuery(groupCompanyName, 1, 1000)), Charset.forName(DEFAULT_ENCODE)));
+            httpPost.setEntity(new StringEntity(JSON.toJSONString(new SubGroupCompanyQuery(groupCompany.getName(), 1, 1000)), Charset.forName(DEFAULT_ENCODE)));
             httpPost.addHeader("token", token);
             httpPost.addHeader("channel", "web");
             httpPost.addHeader("Content-type", "application/json;charset=UTF-8");
@@ -51,7 +52,7 @@ public class SubGroupCompanyNetServiceImpl implements SubGroupCompanyNetService 
             JSONObject contents = JSON.parseObject(response).getJSONObject("content");
             if (contents != null) {
                 JSONArray list = contents.getJSONArray("list");
-                log.error("{} sub group company size is {}", groupCompanyName, list.size());
+                log.info("{} {} sub group company size is {}", groupCompany.getId(), groupCompany.getName(), list.size());
                 for (int i = 0; i < list.size(); i++) {
                     JSONObject content = list.getJSONObject(i);
                     SubGroupCompany subGroupCompany = new SubGroupCompany();

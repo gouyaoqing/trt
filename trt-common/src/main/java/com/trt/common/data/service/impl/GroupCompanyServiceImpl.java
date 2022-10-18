@@ -39,6 +39,8 @@ public class GroupCompanyServiceImpl implements GroupCompanyService {
 
     @Override
     public List<GroupCompany> findAll() {
-        return groupCompanyMapper.selectList(new QueryWrapper<>());
+        QueryWrapper<GroupCompany> queryWrapper = new QueryWrapper<>();
+        queryWrapper.orderByAsc("id");
+        return groupCompanyMapper.selectList(queryWrapper);
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -27,22 +28,25 @@ public class InitSubGroupCompanyController {
     private SubGroupCompanyNetService subGroupCompanyNetService;
 
     @PostMapping("/net/init/sub-group-company")
-    public String netInitSubGroupCompany(@RequestParam("token") String token) {
+    public String netInitSubGroupCompany(@RequestParam("token") String token, @RequestParam("start_id") long startId) {
         List<GroupCompany> groupCompanyList = groupCompanyService.findAll();
 
-        groupCompanyList.forEach(groupCompany -> {
-            List<SubGroupCompany> subGroupCompanyList = subGroupCompanyNetService.getByGroupCompany(groupCompany.getName(), token);
-            subGroupCompanyList.forEach(subGroupCompany -> {
-                subGroupCompany.setGroupCompanyId(groupCompany.getId());
-                subGroupCompanyService.getOrInsert(subGroupCompany);
-            });
-            try {
-                Thread.sleep(Duration.ofSeconds(10).toMillis());
-            } catch (Exception e) {
-                //ignore
-            }
+        groupCompanyList.stream()
+                .filter(groupCompany -> groupCompany.getId() >= startId)
+                .sorted(Comparator.comparing(GroupCompany::getId))
+                .forEach(groupCompany -> {
+                    List<SubGroupCompany> subGroupCompanyList = subGroupCompanyNetService.getByGroupCompany(groupCompany, token);
+                    subGroupCompanyList.forEach(subGroupCompany -> {
+                        subGroupCompany.setGroupCompanyId(groupCompany.getId());
+                        subGroupCompanyService.getOrInsert(subGroupCompany);
+                    });
+                    try {
+                        Thread.sleep(Duration.ofSeconds(3).toMillis());
+                    } catch (Exception e) {
+                        //ignore
+                    }
 
-        });
+                });
         log.error("done");
         return "success";
     }
