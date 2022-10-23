@@ -56,4 +56,32 @@ public class Medicine {
      * 创建时间
      */
     private Date createTime;
+    /**
+     * 公司级code
+     */
+    private String companyCode;
+    /**
+     * 别名
+     */
+    private String alias;
+    /**
+     * 分类1
+     */
+    private String category1;
+    /**
+     * 分类2
+     */
+    private String category2;
+    /**
+     * 描述
+     */
+    private String description;
+    /**
+     * 幻彩行动
+     */
+    private String huanCai;
+    /**
+     * 御药三百年
+     */
+    private Boolean yuYao300;
 }
