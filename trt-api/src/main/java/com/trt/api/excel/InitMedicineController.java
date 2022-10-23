@@ -39,14 +39,14 @@ public class InitMedicineController {
             XSSFSheet sheet = xssfWorkbook.getSheetAt(0);
 
 
-            for (int i = 1; i < sheet.getLastRowNum(); i++) {
+            for (int i = 1; i < sheet.getLastRowNum() + 1; i++) {
                 try {
                     XSSFRow sheetRow = sheet.getRow(i);
-                    String idStr = sheetRow.getCell(0).getStringCellValue();
-                    Medicine medicine = medicineMap.get(Long.parseLong(idStr));
+                    Double idDouble = sheetRow.getCell(0).getNumericCellValue();
+                    Medicine medicine = medicineMap.get(idDouble.longValue());
 
                     if (medicine == null) {
-                        log.error("没有 " + idStr);
+                        log.error("没有 " + idDouble);
                         notExist++;
                         continue;
                     }
@@ -55,9 +55,9 @@ public class InitMedicineController {
                     String alias = sheetRow.getCell(9).getStringCellValue();
                     String category1 = sheetRow.getCell(10).getStringCellValue();
                     String category2 = sheetRow.getCell(11).getStringCellValue();
-                    String description = sheetRow.getCell(12).getStringCellValue();
-                    String huanCai = sheetRow.getCell(13).getStringCellValue();
-                    String yuYao300 = sheetRow.getCell(14).getStringCellValue();
+                    String description = sheetRow.getCell(12) == null ? null : sheetRow.getCell(12).getStringCellValue();
+                    String huanCai = sheetRow.getCell(13) == null ? null : sheetRow.getCell(13) .getStringCellValue();
+                    String yuYao300 = sheetRow.getCell(14) == null ? null : sheetRow.getCell(14).getStringCellValue();
 
                     //update
                     medicine.setCompanyCode(companyCode)
@@ -70,7 +70,7 @@ public class InitMedicineController {
 
                     medicineService.updateSameField(medicine);
                 } catch (Exception e) {
-                    System.out.println(e);
+                    log.error("error",e);
                 }
             }
         } catch (IOException e) {

@@ -1,6 +1,7 @@
 package com.trt.common.data.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -83,5 +84,6 @@ public class Medicine {
     /**
      * 御药三百年
      */
+    @TableField("yu_yao_300")
     private Boolean yuYao300;
 }
