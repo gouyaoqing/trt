@@ -80,4 +80,8 @@ public class Custom {
      * 商业属性
      */
     private String businessType;
+    /**
+     * 上级连锁Aid
+     */
+    private Long groupCompanyId;
 }

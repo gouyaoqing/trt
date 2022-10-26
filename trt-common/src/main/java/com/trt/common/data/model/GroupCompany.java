@@ -31,4 +31,6 @@ public class GroupCompany {
      * 创建时间
      */
     private Date createTime;
+
+    private Boolean hongJun;
 }

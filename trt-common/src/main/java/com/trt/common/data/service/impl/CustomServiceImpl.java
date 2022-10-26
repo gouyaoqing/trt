@@ -1,8 +1,6 @@
 package com.trt.common.data.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.Update;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.CustomMapper;
@@ -59,6 +57,30 @@ public class CustomServiceImpl implements CustomService {
         wrapper.set("organization_code", custom.getOrganizationCode());
         wrapper.set("address", custom.getAddress());
         wrapper.set("taxes_code", custom.getTaxesCode());
+
+        return customMapper.update(custom, wrapper);
+    }
+
+    @Override
+    public int updateBusinessTypeById(Custom custom) {
+        if (custom.getId() == null) {
+            return 0;
+        }
+        UpdateWrapper<Custom> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", custom.getId());
+        wrapper.set("business_type", custom.getBusinessType());
+
+        return customMapper.update(custom, wrapper);
+    }
+
+    @Override
+    public int updateGroupCompanyId(Custom custom) {
+        if (custom.getId() == null) {
+            return 0;
+        }
+        UpdateWrapper<Custom> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", custom.getId());
+        wrapper.set("group_company_id", custom.getGroupCompanyId());
 
         return customMapper.update(custom, wrapper);
     }

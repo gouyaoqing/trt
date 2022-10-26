@@ -12,4 +12,7 @@ public interface CustomService {
 
     int updateExcelInfo(Custom custom);
 
+    int updateBusinessTypeById(Custom custom);
+
+    int updateGroupCompanyId(Custom custom);
 }

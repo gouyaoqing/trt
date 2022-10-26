@@ -13,4 +13,6 @@ public interface GroupCompanyService {
     int getOrInsert(GroupCompany groupCompany) throws BusinessException;
 
     List<GroupCompany> findAll();
+
+    int updateHongJun(GroupCompany groupCompany);
 }

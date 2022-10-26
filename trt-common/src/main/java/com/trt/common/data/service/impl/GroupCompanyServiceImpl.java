@@ -1,6 +1,7 @@
 package com.trt.common.data.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.GroupCompanyMapper;
 import com.trt.common.data.model.GroupCompany;
@@ -42,5 +43,16 @@ public class GroupCompanyServiceImpl implements GroupCompanyService {
         QueryWrapper<GroupCompany> queryWrapper = new QueryWrapper<>();
         queryWrapper.orderByAsc("id");
         return groupCompanyMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public int updateHongJun(GroupCompany groupCompany) {
+        if (groupCompany.getId() == null) {
+            return 0;
+        }
+        UpdateWrapper<GroupCompany> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", groupCompany.getId());
+        updateWrapper.set("hong_jun", groupCompany.getHongJun());
+        return groupCompanyMapper.update(groupCompany, updateWrapper);
     }
 }
