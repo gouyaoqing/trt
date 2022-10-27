@@ -44,3 +44,6 @@ spring:
       testOnBorrow: false
       testOnReturn: false
       testWhileIdle: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
