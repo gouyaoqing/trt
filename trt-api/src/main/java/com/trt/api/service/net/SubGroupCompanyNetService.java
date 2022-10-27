@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface SubGroupCompanyNetService {
     List<SubGroupCompany> getByGroupCompany(GroupCompany groupCompany, String token);
+
+    List<SubGroupCompany> getSubGroupCompanyByJson(String json);
 }

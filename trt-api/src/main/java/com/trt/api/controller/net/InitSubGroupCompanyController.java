@@ -7,6 +7,7 @@ import com.trt.common.data.service.GroupCompanyService;
 import com.trt.common.data.service.SubGroupCompanyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,6 +50,32 @@ public class InitSubGroupCompanyController {
                 });
         log.error("done");
         return "success";
+    }
+
+    @PostMapping("/save/sub-group-company")
+    public String saveSubGroupCompany(@RequestParam("group_company_name") String groupCompanyName,
+                                      @RequestParam("country_top_100") Boolean countryTop100,
+                                      @RequestParam("important_19") Boolean important19,
+                                      @RequestParam("county_top_100") Boolean countyTop100,
+                                      @RequestBody String response) {
+        GroupCompany groupCompany = groupCompanyService.findByName(groupCompanyName).orElseThrow(() -> new IllegalArgumentException("group company 不存在"));
+        if (countryTop100 || important19 || countyTop100) {
+            groupCompany.setCountryTop100(countryTop100)
+                    .setImportant19(important19)
+                    .setCountyTop100(countyTop100);
+            groupCompanyService.updateBooleanLabel(groupCompany);
+        }
+
+
+        List<SubGroupCompany> subGroupCompanyList = subGroupCompanyNetService.getSubGroupCompanyByJson(response);
+        log.info("母公司 {} 解析子公司{}个", groupCompanyName, subGroupCompanyList.size());
+        subGroupCompanyList.forEach(subGroupCompany -> {
+            subGroupCompany.setGroupCompanyId(groupCompany.getId());
+            subGroupCompanyService.getOrInsert(subGroupCompany);
+        });
+
+        log.info("done");
+        return "母公司 " + groupCompanyName + " 已保存子公司" + subGroupCompanyList.size() + "个";
     }
 
 }

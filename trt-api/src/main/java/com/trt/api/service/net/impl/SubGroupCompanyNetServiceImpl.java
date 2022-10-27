@@ -80,6 +80,27 @@ public class SubGroupCompanyNetServiceImpl implements SubGroupCompanyNetService 
         return results;
     }
 
+    @Override
+    public List<SubGroupCompany> getSubGroupCompanyByJson(String response) {
+        List<SubGroupCompany> results = Lists.newArrayList();
+        JSONObject contents = JSON.parseObject(response).getJSONObject("content");
+        if (contents != null) {
+            JSONArray list = contents.getJSONArray("list");
+            for (int i = 0; i < list.size(); i++) {
+                JSONObject content = list.getJSONObject(i);
+                SubGroupCompany subGroupCompany = new SubGroupCompany();
+                results.add(subGroupCompany);
+
+                subGroupCompany.setName(content.getString("parent"));
+                subGroupCompany.setProvince(content.getString("province"));
+                subGroupCompany.setCity(content.getString("city"));
+                subGroupCompany.setStoreNum(content.getInteger("storeNum"));
+                subGroupCompany.setTotalMarketPotential(content.getInteger("totalMarketPotential"));
+            }
+        }
+        return results;
+    }
+
     @Data
     @Accessors(chain = true)
     @AllArgsConstructor

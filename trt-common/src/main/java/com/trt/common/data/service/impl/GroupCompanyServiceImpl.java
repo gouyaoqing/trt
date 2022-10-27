@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author gouyaoqing
@@ -54,5 +55,32 @@ public class GroupCompanyServiceImpl implements GroupCompanyService {
         updateWrapper.eq("id", groupCompany.getId());
         updateWrapper.set("hong_jun", groupCompany.getHongJun());
         return groupCompanyMapper.update(groupCompany, updateWrapper);
+    }
+
+    @Override
+    public Optional<GroupCompany> findByName(String name) {
+        return Optional.ofNullable(name)
+                .map(groupCompanyName -> {
+                    QueryWrapper<GroupCompany> queryWrapper = new QueryWrapper<>();
+                    queryWrapper.eq("name", groupCompanyName);
+                    return queryWrapper;
+                })
+                .map(queryWrapper -> groupCompanyMapper.selectOne(queryWrapper));
+    }
+
+    @Override
+    public int updateBooleanLabel(GroupCompany groupCompany) {
+        if (groupCompany == null || groupCompany.getId() == null) {
+            return 0;
+        }
+
+        UpdateWrapper<GroupCompany> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", groupCompany.getId());
+        updateWrapper.set("country_top_100", groupCompany.getCountryTop100());
+        updateWrapper.set("important_19", groupCompany.getImportant19());
+        updateWrapper.set("county_top_100", groupCompany.getCountyTop100());
+
+        return groupCompanyMapper.update(groupCompany, updateWrapper);
+
     }
 }

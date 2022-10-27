@@ -8,8 +8,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="trt-api" />
-        <module name="trt-common" />
         <module name="trt-main" />
+        <module name="trt-common" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

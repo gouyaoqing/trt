@@ -31,6 +31,21 @@ public class GroupCompany {
      * 创建时间
      */
     private Date createTime;
-
+    /**
+     * 是否是红军联盟
+     */
     private Boolean hongJun;
+    /**
+     * 全国百强
+     */
+    private Boolean countryTop100;
+    /**
+     * 重点19家
+     */
+    private Boolean important19;
+    /**
+     * 县域百强
+     */
+    private Boolean countyTop100;
+
 }
