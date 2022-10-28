@@ -3,17 +3,8 @@ package com.trt.main.configuration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
 
-/**
- * PROJECT: api-service
- * PACKAGE: com.jd.mlaas.apiservice.configuration
- * DESC: Please input descriptions...
- *
- * @author huzhanfei
- * @since 2018/10/16
- */
 @Configuration
-@EnableWebMvc
-public class WebConfiguration implements WebMvcConfigurer {
+public class WebConfiguration extends WebMvcConfigurationSupport {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         String[] excludePathPatterns = {
@@ -33,41 +24,9 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
-//        registry.addResourceHandler("/null/swagger-resources/**")
+//        registry.addResourceHandler("/swagger-resources/**")
 //                .addResourceLocations("classpath:/META-INF/resources/");
-//        registry.addResourceHandler("/swagger-ui.html/swagger-resources/**")
-//                .addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/swagger-resources/**")
-                .addResourceLocations("classpath:/META-INF/resources/");
-
+        super.addResourceHandlers(registry);
     }
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addRedirectViewController(
-                "/null/api-docs",
-                "/api-docs").setKeepQueryParams(true);
-        registry.addRedirectViewController(
-                "/null/swagger-resources/configuration/ui",
-                "/swagger-resources/configuration/ui");
-        registry.addRedirectViewController(
-                "/null/swagger-resources/configuration/security",
-                "/swagger-resources/configuration/security");
-        registry.addRedirectViewController(
-                "/null/swagger-resources",
-                "/swagger-resources");
-
-        registry.addRedirectViewController(
-                "/swagger-ui.html/api-docs",
-                "/api-docs").setKeepQueryParams(true);
-        registry.addRedirectViewController(
-                "/swagger-ui.html/swagger-resources/configuration/ui",
-                "/swagger-resources/configuration/ui");
-        registry.addRedirectViewController(
-                "/swagger-ui.html/swagger-resources/configuration/security",
-                "/swagger-resources/configuration/security");
-        registry.addRedirectViewController(
-                "/swagger-ui.html/swagger-resources",
-                "/swagger-resources");
-    }
 }

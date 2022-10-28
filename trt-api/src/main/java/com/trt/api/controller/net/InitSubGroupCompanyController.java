@@ -5,6 +5,9 @@ import com.trt.common.data.model.GroupCompany;
 import com.trt.common.data.model.SubGroupCompany;
 import com.trt.common.data.service.GroupCompanyService;
 import com.trt.common.data.service.SubGroupCompanyService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -52,12 +55,13 @@ public class InitSubGroupCompanyController {
         return "success";
     }
 
+    @ApiOperation("手动抓取子公司")
     @PostMapping("/save/sub-group-company")
-    public String saveSubGroupCompany(@RequestParam("group_company_name") String groupCompanyName,
-                                      @RequestParam("country_top_100") Boolean countryTop100,
-                                      @RequestParam("important_19") Boolean important19,
-                                      @RequestParam("county_top_100") Boolean countyTop100,
-                                      @RequestBody String response) {
+    public String saveSubGroupCompany(@ApiParam("母公司名称") @RequestParam("group_company_name") String groupCompanyName,
+                                      @ApiParam("全国百强") @RequestParam("country_top_100") Boolean countryTop100,
+                                      @ApiParam("重点19家") @RequestParam("important_19") Boolean important19,
+                                      @ApiParam("省域百强") @RequestParam("county_top_100") Boolean countyTop100,
+                                      @ApiParam("网页抓取数据") @RequestBody String response) {
         GroupCompany groupCompany = groupCompanyService.findByName(groupCompanyName).orElseThrow(() -> new IllegalArgumentException("group company 不存在"));
         if (countryTop100 || important19 || countyTop100) {
             groupCompany.setCountryTop100(countryTop100)
