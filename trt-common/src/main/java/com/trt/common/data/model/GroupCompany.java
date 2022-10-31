@@ -1,6 +1,7 @@
 package com.trt.common.data.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -38,14 +39,17 @@ public class GroupCompany {
     /**
      * 全国百强
      */
+    @TableField("country_top_100")
     private Boolean countryTop100;
     /**
      * 重点19家
      */
+    @TableField("important_19")
     private Boolean important19;
     /**
      * 县域百强
      */
+    @TableField("county_top_100")
     private Boolean countyTop100;
 
 }
