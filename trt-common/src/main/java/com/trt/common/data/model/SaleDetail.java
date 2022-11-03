@@ -78,4 +78,8 @@ public class SaleDetail {
     private Date createTime;
 
     private String excel;
+    /**
+     * 是否是直供
+     */
+    private Boolean zhiGong;
 }

@@ -15,12 +15,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class SaleDetailImportServiceImpl implements SaleDetailImportService {
+    private static final String ZHI_GONG_DEALER_CODE = "H00000";
+    private static final String ZHI_GONG_MEDICINE_BATCH_CODE = "M00000";
+
     @Resource
     private DealerService dealerService;
 
@@ -71,66 +76,97 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
     }
 
     @Override
-    public void importZhiGongByExcel(String excelPath, String excelName) {
+    public void importZhiGongByExcel(String excelPath, String excelName) throws IllegalAccessException {
+        Map<String, Custom> customMap = customService.findAll().stream().collect(Collectors.toMap(Custom::getName, Function.identity(), BinaryOperator.maxBy(Comparator.comparing(Custom::getId))));
+        Dealer dealer = new Dealer()
+                .setCode(ZHI_GONG_DEALER_CODE)
+                .setName("同仁堂科技公司")
+                .setArea("华北区")
+                .setCity("北京市")
+                .setProvince("北京市")
+                .setLevel(0);
+        dealerService.getOrInsert(dealer);
+
+        List<SaleDetailExcel> saleDetailData = readZhiGongExcel(excelPath, excelName);
+
+        //check
+        String notExistCustom = saleDetailData.stream()
+                .map(SaleDetailExcel::getCustom)
+                .map(Custom::getName)
+                .filter(customName -> !customMap.containsKey(customName))
+                .collect(Collectors.joining(","));
+        if (notExistCustom.length() > 0) {
+            log.error("客户不存在。" + notExistCustom);
+            throw new IllegalAccessException("客户不存在" + notExistCustom);
+        }
+
+        saleDetailService.deleteByExcelName(excelName);
+
+        saleDetailData.forEach(saleDetailExcel -> {
+            try {
+                MedicineBatch medicineBatch = new MedicineBatch()
+                        .setMedicineId(saleDetailExcel.getMedicine().getId())
+                        .setLotNumber(ZHI_GONG_MEDICINE_BATCH_CODE);
+
+                medicineBatchService.getOrInsert(medicineBatch);
+
+                SaleDetail saleDetail = new SaleDetail();
+                saleDetail.setDealerId(dealer.getId());
+                saleDetail.setCustomId(customMap.get(saleDetailExcel.getCustom().getName()).getId());
+                saleDetail.setMedicineBatchId(medicineBatch.getId());
+                saleDetail.setZhiGong(true);
+                saleDetail.setExcel(excelName);
+                BeanUtils.copyProperties(saleDetailExcel, saleDetail);
+
+                saleDetailService.insert(saleDetail);
+            } catch (Exception e) {
+                log.error("insert data error .{}", saleDetailExcel, e);
+            }
+
+        });
+        log.error("done");
 
     }
 
-    private List<SaleDetailExcel> readZhiGongExcel(String excelPath,String excelName){
+    private List<SaleDetailExcel> readZhiGongExcel(String excelPath, String excelName) {
         List<SaleDetailExcel> result = new ArrayList<>();
 
         try {
-            EasyExcel.read(excelPath, EasyExcelDemo.class,new PageReadListener<EasyExcelDemo>(dataList->{
-                dataList.forEach(data->{
-                    SaleDetailExcel saleDetailExcel = new SaleDetailExcel();
-                    result.add(saleDetailExcel);
+            EasyExcel.read(excelPath, EasyExcelDemo.class, new PageReadListener<EasyExcelDemo>(dataList -> {
+                dataList.forEach(data -> {
+                    if ("是".equals(data.getO())) {
+                        SaleDetailExcel saleDetailExcel = new SaleDetailExcel();
+                        result.add(saleDetailExcel);
 
-                    Dealer dealer = new Dealer();
-                    dealer.setArea(data.getDealerArea())
-                            .setProvince(demoData.getDealerProvince())
-                            .setCity(demoData.getDealerCity())
-                            .setCode(demoData.getDealerCode())
-                            .setName(demoData.getDealerName())
-                            .setLevel(NumberUtils.parse(demoData.getDealerLevel()));
-                    saleDetailExcel.setDealer(dealer);
+                        saleDetailExcel.setDealer(null);
 
-                    Custom custom = new Custom()
-                            .setArea(demoData.getCustomArea())
-                            .setProvince(demoData.getCustomProvince())
-                            .setCity(demoData.getCustomCity())
-                            .setCode(demoData.getCustomCode())
-                            .setName(demoData.getCustomName())
-                            .setBusinessType(demoData.getBusinessType());
-                    saleDetailExcel.setCustom(custom);
+                        Custom custom = new Custom()
+                                .setArea(data.getD())
+                                .setName(data.getA());
+                        saleDetailExcel.setCustom(custom);
 
-                    MedicineBatch medicineBatch = new MedicineBatch();
-                    medicineBatch.setLotNumber(demoData.getMedicineLotNum());
-                    saleDetailExcel.setMedicineBatch(medicineBatch);
+                        saleDetailExcel.setMedicineBatch(null);
 
-                    Medicine medicine = new Medicine();
-                    medicine.setCode(demoData.getMedicineCode())
-                            .setName(demoData.getMedicineName())
-                            .setSpecification(demoData.getMedicineSpecification())
-                            .setInitSpecification(demoData.getMedicineInitSpecification())
-                            .setUnit(demoData.getMedicineUnit())
-                            .setPackingPcs(demoData.getPackingPcs())
-                            .setDepartment(demoData.getDepartment());
-                    saleDetailExcel.setMedicine(medicine);
+                        Medicine medicine = new Medicine();
+                        medicine.setName(data.getF());
+                        medicine.setCode(data.getS());
+                        medicine.setId(Long.parseLong(data.getR()));
+                        saleDetailExcel.setMedicine(medicine);
 
-                    saleDetailExcel.setSaleNum(demoData.getSaleNum())
-                            .setSalePrice(demoData.getSalePrice())
-                            .setSaleAmount(demoData.getSaleAmount())
-                            .setSaleDate(demoData.getSaleDate())
-                            .setMinUnit(demoData.getMinUnit())
-                            .setMinNum(demoData.getMinNum())
-                            .setPackageNum(demoData.getPackageNum())
-                            .setMinPrice(demoData.getMinPrice())
-                            .setSaleAmountDouble(demoData.getSaleAmountDouble())
-                            .setExcel(excelName);
+                        saleDetailExcel.setSaleNum(Integer.parseInt(data.getK()))
+                                .setSalePrice(Double.parseDouble(data.getI()))
+                                .setSaleAmount(Double.parseDouble(data.getL()))
+                                .setSaleDate(new Date(data.getM()))
+                                .setPackageNum(Double.parseDouble(data.getQ()))
+                                .setSaleAmountDouble(Double.parseDouble(data.getL()))
+                                .setExcel(excelName);
+                    }
                 });
             }));
-        }catch (Exception e){
-
+        } catch (Exception e) {
+            log.error("readZhiGongExcel error", e);
         }
+        return result;
     }
 
     private List<SaleDetailExcel> readExcel(String excelPath, String excelName) {
