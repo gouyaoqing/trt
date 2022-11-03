@@ -1,6 +1,7 @@
 package com.trt.api.controller;
 
 import com.trt.api.service.SaleDetailImportService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,13 @@ public class SaleDetailController {
     @PostMapping("/sale-detal/excel")
     public String importSaleDetailByExcel(@RequestParam("excelPath") String excelPath, @RequestParam("excelName") String excelName) {
         saleDetailImportService.importByExcel(excelPath, excelName);
+        return "success";
+    }
+
+    @ApiOperation(value = "导入销售数据-直供终端")
+    @PostMapping("/sale-detal/zhi-gong/excel")
+    public String importSaleDetailZhiGongByExcel(@RequestParam("excelPath") String excelPath, @RequestParam("excelName") String excelName) {
+        saleDetailImportService.importZhiGongByExcel(excelPath, excelName);
         return "success";
     }
 }

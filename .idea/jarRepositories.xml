@@ -7,14 +7,19 @@
       <option name="url" value="https://repo.maven.apache.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="rdc-releases" />
+      <option name="name" value="rdc-releases" />
+      <option name="url" value="https://repo.rdc.aliyun.com/repository/XXXXXX/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="rdc-snapshots" />
+      <option name="name" value="rdc-snapshots" />
+      <option name="url" value="https://repo.rdc.aliyun.com/repository/XXXXXX/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="libs-releases-local" />
       <option name="name" value="libs-releases" />
       <option name="url" value="https://artifactory.jd.com/libs-releases" />
-    </remote-repository>
-    <remote-repository>
-      <option name="id" value="snapshots" />
-      <option name="name" value="libs-snapshots" />
-      <option name="url" value="https://artifactory.jd.com/libs-snapshots" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central" />
@@ -22,14 +27,44 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="jboss.community" />
-      <option name="name" value="JBoss Community repository" />
-      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+      <option name="id" value="public" />
+      <option name="name" value="public" />
+      <option name="url" value="https://maven.aliyun.com/repository/public" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="libs-snapshots-local" />
       <option name="name" value="libs-snapshots" />
       <option name="url" value="https://artifactory.jd.com/libs-releases" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="central" />
+      <option name="name" value="Central Repository" />
+      <option name="url" value="https://maven.aliyun.com/repository/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="libs-snapshots-local" />
+      <option name="name" value="libs-snapshots" />
+      <option name="url" value="https://maven.aliyun.com/repository/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="edas-oss-central" />
+      <option name="name" value="taobao mirror central" />
+      <option name="url" value="https://maven.aliyun.com/repository/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="libs-releases-local" />
+      <option name="name" value="libs-releases" />
+      <option name="url" value="https://maven.aliyun.com/repository/public" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="snapshots" />
+      <option name="name" value="libs-snapshots" />
+      <option name="url" value="https://artifactory.jd.com/libs-snapshots" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="jboss.community" />
+      <option name="name" value="JBoss Community repository" />
+      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="releases" />

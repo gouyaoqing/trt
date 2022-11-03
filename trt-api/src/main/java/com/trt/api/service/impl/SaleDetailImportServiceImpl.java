@@ -2,6 +2,7 @@ package com.trt.api.service.impl;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
+import com.trt.api.model.EasyExcelDemo;
 import com.trt.api.model.ExcelDemo;
 import com.trt.api.model.SaleDetailExcel;
 import com.trt.api.service.SaleDetailImportService;
@@ -67,6 +68,69 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
 
         });
         log.error("done");
+    }
+
+    @Override
+    public void importZhiGongByExcel(String excelPath, String excelName) {
+
+    }
+
+    private List<SaleDetailExcel> readZhiGongExcel(String excelPath,String excelName){
+        List<SaleDetailExcel> result = new ArrayList<>();
+
+        try {
+            EasyExcel.read(excelPath, EasyExcelDemo.class,new PageReadListener<EasyExcelDemo>(dataList->{
+                dataList.forEach(data->{
+                    SaleDetailExcel saleDetailExcel = new SaleDetailExcel();
+                    result.add(saleDetailExcel);
+
+                    Dealer dealer = new Dealer();
+                    dealer.setArea(data.getDealerArea())
+                            .setProvince(demoData.getDealerProvince())
+                            .setCity(demoData.getDealerCity())
+                            .setCode(demoData.getDealerCode())
+                            .setName(demoData.getDealerName())
+                            .setLevel(NumberUtils.parse(demoData.getDealerLevel()));
+                    saleDetailExcel.setDealer(dealer);
+
+                    Custom custom = new Custom()
+                            .setArea(demoData.getCustomArea())
+                            .setProvince(demoData.getCustomProvince())
+                            .setCity(demoData.getCustomCity())
+                            .setCode(demoData.getCustomCode())
+                            .setName(demoData.getCustomName())
+                            .setBusinessType(demoData.getBusinessType());
+                    saleDetailExcel.setCustom(custom);
+
+                    MedicineBatch medicineBatch = new MedicineBatch();
+                    medicineBatch.setLotNumber(demoData.getMedicineLotNum());
+                    saleDetailExcel.setMedicineBatch(medicineBatch);
+
+                    Medicine medicine = new Medicine();
+                    medicine.setCode(demoData.getMedicineCode())
+                            .setName(demoData.getMedicineName())
+                            .setSpecification(demoData.getMedicineSpecification())
+                            .setInitSpecification(demoData.getMedicineInitSpecification())
+                            .setUnit(demoData.getMedicineUnit())
+                            .setPackingPcs(demoData.getPackingPcs())
+                            .setDepartment(demoData.getDepartment());
+                    saleDetailExcel.setMedicine(medicine);
+
+                    saleDetailExcel.setSaleNum(demoData.getSaleNum())
+                            .setSalePrice(demoData.getSalePrice())
+                            .setSaleAmount(demoData.getSaleAmount())
+                            .setSaleDate(demoData.getSaleDate())
+                            .setMinUnit(demoData.getMinUnit())
+                            .setMinNum(demoData.getMinNum())
+                            .setPackageNum(demoData.getPackageNum())
+                            .setMinPrice(demoData.getMinPrice())
+                            .setSaleAmountDouble(demoData.getSaleAmountDouble())
+                            .setExcel(excelName);
+                });
+            }));
+        }catch (Exception e){
+
+        }
     }
 
     private List<SaleDetailExcel> readExcel(String excelPath, String excelName) {
