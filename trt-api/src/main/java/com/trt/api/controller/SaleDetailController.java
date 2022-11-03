@@ -21,7 +21,7 @@ public class SaleDetailController {
 
     @ApiOperation(value = "导入销售数据-直供终端")
     @PostMapping("/sale-detal/zhi-gong/excel")
-    public String importSaleDetailZhiGongByExcel(@RequestParam("excelPath") String excelPath, @RequestParam("excelName") String excelName) {
+    public String importSaleDetailZhiGongByExcel(@RequestParam("excelPath") String excelPath, @RequestParam("excelName") String excelName) throws Exception {
         saleDetailImportService.importZhiGongByExcel(excelPath, excelName);
         return "success";
     }
