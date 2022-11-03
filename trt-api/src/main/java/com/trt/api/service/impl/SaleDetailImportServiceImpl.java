@@ -15,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -116,6 +117,7 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
                 saleDetail.setMedicineBatchId(medicineBatch.getId());
                 saleDetail.setZhiGong(true);
                 saleDetail.setExcel(excelName);
+                saleDetail.setSaleDate(saleDetailExcel.getSaleDate());
                 BeanUtils.copyProperties(saleDetailExcel, saleDetail);
 
                 saleDetailService.insert(saleDetail);
@@ -130,39 +132,43 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
 
     private List<SaleDetailExcel> readZhiGongExcel(String excelPath, String excelName) {
         List<SaleDetailExcel> result = new ArrayList<>();
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
             EasyExcel.read(excelPath, EasyExcelDemo.class, new PageReadListener<EasyExcelDemo>(dataList -> {
-                dataList.forEach(data -> {
-                    if ("是".equals(data.getO())) {
-                        SaleDetailExcel saleDetailExcel = new SaleDetailExcel();
-                        result.add(saleDetailExcel);
+                for (EasyExcelDemo data : dataList) {
+                    try {
+                        if ("是".equals(data.getO())) {
+                            SaleDetailExcel saleDetailExcel = new SaleDetailExcel();
+                            result.add(saleDetailExcel);
 
-                        saleDetailExcel.setDealer(null);
+                            Custom custom = new Custom()
+                                    .setArea(data.getD())
+                                    .setName(data.getA());
+                            saleDetailExcel.setCustom(custom);
 
-                        Custom custom = new Custom()
-                                .setArea(data.getD())
-                                .setName(data.getA());
-                        saleDetailExcel.setCustom(custom);
+                            saleDetailExcel.setMedicineBatch(null);
 
-                        saleDetailExcel.setMedicineBatch(null);
+                            Medicine medicine = new Medicine();
+                            medicine.setName(data.getF());
+                            medicine.setCode(data.getS());
+                            medicine.setId(Long.parseLong(data.getR()));
+                            saleDetailExcel.setMedicine(medicine);
 
-                        Medicine medicine = new Medicine();
-                        medicine.setName(data.getF());
-                        medicine.setCode(data.getS());
-                        medicine.setId(Long.parseLong(data.getR()));
-                        saleDetailExcel.setMedicine(medicine);
-
-                        saleDetailExcel.setSaleNum(Integer.parseInt(data.getK()))
-                                .setSalePrice(Double.parseDouble(data.getI()))
-                                .setSaleAmount(Double.parseDouble(data.getL()))
-                                .setSaleDate(new Date(data.getM()))
-                                .setPackageNum(Double.parseDouble(data.getQ()))
-                                .setSaleAmountDouble(Double.parseDouble(data.getL()))
-                                .setExcel(excelName);
+                            saleDetailExcel.setSaleNum(new Double(Double.parseDouble(data.getK())).intValue())
+                                    .setSalePrice(Double.parseDouble(data.getI()))
+                                    .setSaleAmount(Double.parseDouble(data.getL()))
+                                    .setSaleDate(formatter.parse(data.getM()))
+                                    .setPackageNum(Double.parseDouble(data.getQ()))
+                                    .setSaleAmountDouble(Double.parseDouble(data.getL()))
+                                    .setExcel(excelName);
+                        }
+                    } catch (Exception e) {
+                        log.error("readZhiGongExcel error", e);
                     }
-                });
-            }));
+
+                }
+            })).sheet().doRead();
         } catch (Exception e) {
             log.error("readZhiGongExcel error", e);
         }
