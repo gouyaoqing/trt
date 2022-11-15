@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -40,27 +41,35 @@ public class InitCustomController {
 
     @PostMapping("/excel/init-custom")
     public String initMedicine(@RequestParam("excelPath") String excelPath) {
-        Map<Long, Custom> customMap = customService.findAll().stream().collect(Collectors.toMap(Custom::getId, Function.identity()));
+        Map<String, Custom> customMap = customService.findAll().stream().collect(Collectors.toMap(Custom::getName, Function.identity(), (a, b) -> a));
 
-        int notExist = 0;
+        AtomicInteger notExist = new AtomicInteger();
         try {
             EasyExcel.read(excelPath, EasyExcelDemo.class, new PageReadListener<EasyExcelDemo>(dataList -> {
                 for (EasyExcelDemo demoData : dataList) {
                     try {
-                        String idStr = demoData.getA();
-                        Custom custom = customMap.get(Long.parseLong(idStr));
+                        String name = demoData.getB();
+
+                        if (StringUtils.isBlank(name)) {
+                            continue;
+                        }
+                        Custom custom = customMap.get(name);
 
                         if (custom == null) {
-                            log.error("没有 " + idStr);
+                            log.error("没有 " + name);
+                            notExist.getAndDecrement();
                             continue;
                         }
 
-                        String businessType = demoData.getB();
+                        String businessType = demoData.getC();
 
-                        //update
-                        custom.setBusinessType(businessType);
+                        if (StringUtils.isNotBlank(businessType)) {
+                            //update
+                            custom.setBusinessType(businessType);
 
-                        customService.updateBusinessTypeById(custom);
+                            customService.updateBusinessTypeById(custom);
+                        }
+
                     } catch (Exception e) {
                         log.error("read excel error.{}", demoData, e);
                     }
@@ -72,7 +81,7 @@ public class InitCustomController {
             e.printStackTrace();
         } finally {
         }
-        log.info("done.not exist=" + notExist);
+        log.info("done.not exist=" + notExist.get());
         return "success";
     }
 
