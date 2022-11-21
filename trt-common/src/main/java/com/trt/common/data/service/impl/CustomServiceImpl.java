@@ -78,9 +78,19 @@ public class CustomServiceImpl implements CustomService {
         if (custom.getId() == null) {
             return 0;
         }
+
+        if (custom.getGroupCompanyId() == null && custom.getSubGroupCompanyId() == null) {
+            return 0;
+        }
+
         UpdateWrapper<Custom> wrapper = new UpdateWrapper<>();
         wrapper.eq("id", custom.getId());
-        wrapper.set("group_company_id", custom.getGroupCompanyId());
+        if (custom.getGroupCompanyId() != null) {
+            wrapper.set("group_company_id", custom.getGroupCompanyId());
+        }
+        if (custom.getSubGroupCompanyId() != null) {
+            wrapper.set("sub_group_company_id", custom.getSubGroupCompanyId());
+        }
 
         return customMapper.update(custom, wrapper);
     }

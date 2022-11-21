@@ -52,4 +52,14 @@ public class GroupCompany {
     @TableField("county_top_100")
     private Boolean countyTop100;
 
+    private String province;
+
+    private String city;
+
+    /**
+     * 市级十强
+     */
+    @TableField("city_top_10")
+    private Boolean cityTop10;
+
 }

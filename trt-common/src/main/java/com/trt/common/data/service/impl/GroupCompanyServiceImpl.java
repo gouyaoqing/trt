@@ -83,4 +83,17 @@ public class GroupCompanyServiceImpl implements GroupCompanyService {
         return groupCompanyMapper.update(groupCompany, updateWrapper);
 
     }
+
+    @Override
+    public int updateCity(GroupCompany groupCompany) {
+        if (groupCompany.getId() == null) {
+            return 0;
+        }
+        UpdateWrapper<GroupCompany> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id", groupCompany.getId());
+        updateWrapper.set("province", groupCompany.getProvince());
+        updateWrapper.set("city", groupCompany.getCity());
+        updateWrapper.set("city_top_10", groupCompany.getCityTop10());
+        return groupCompanyMapper.update(groupCompany, updateWrapper);
+    }
 }

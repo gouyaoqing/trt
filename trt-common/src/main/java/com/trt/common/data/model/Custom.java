@@ -84,4 +84,8 @@ public class Custom {
      * 上级连锁Aid
      */
     private Long groupCompanyId;
+    /**
+     * 子连锁id
+     */
+    private Long subGroupCompanyId;
 }

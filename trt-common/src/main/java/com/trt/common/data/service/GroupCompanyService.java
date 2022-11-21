@@ -20,4 +20,6 @@ public interface GroupCompanyService {
     Optional<GroupCompany> findByName(String name);
 
     int updateBooleanLabel(GroupCompany groupCompany);
+
+    int updateCity(GroupCompany groupCompany);
 }

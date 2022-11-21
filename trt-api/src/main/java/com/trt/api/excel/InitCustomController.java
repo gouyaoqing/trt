@@ -9,6 +9,7 @@ import com.trt.common.data.model.*;
 import com.trt.common.data.service.CustomService;
 import com.trt.common.data.service.GroupCompanyService;
 import com.trt.common.data.service.MedicineService;
+import com.trt.common.data.service.SubGroupCompanyService;
 import com.trt.common.utils.NumberUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,9 @@ public class InitCustomController {
 
     @Resource
     private GroupCompanyService groupCompanyService;
+
+    @Resource
+    private SubGroupCompanyService subGroupCompanyService;
 
     @PostMapping("/excel/init-custom")
     public String initMedicine(@RequestParam("excelPath") String excelPath) {
@@ -123,6 +127,57 @@ public class InitCustomController {
                             }
 
                         }
+                    } catch (Exception e) {
+                        log.error("read excel error.{}", demoData, e);
+                    }
+
+                }
+            })).sheet().doRead();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+        log.info("done.");
+        return "success";
+    }
+
+    @PostMapping("/excel/import-custom-group-company")
+    public String importCustomGroupCompany(@RequestParam("excelPath") String excelPath) {
+        Map<String, Custom> customMap = customService.findAll().stream().collect(Collectors.toMap(Custom::getName, Function.identity(), (a, b) -> a));
+        Map<Long, SubGroupCompany> subGroupCompanyMap = subGroupCompanyService.findAll().stream().collect(Collectors.toMap(SubGroupCompany::getId, Function.identity(), (a, b) -> a));
+
+        try {
+            EasyExcel.read(excelPath, EasyExcelDemo.class, new PageReadListener<EasyExcelDemo>(dataList -> {
+                for (EasyExcelDemo demoData : dataList) {
+                    try {
+                        String customName = demoData.getC();
+                        Long groupCompanyId = (StringUtils.isBlank(demoData.getQ()) || "NULL".equals(demoData.getQ())) ? null : Long.parseLong(demoData.getQ());
+                        Long subGroupCompanyId = (StringUtils.isBlank(demoData.getR()) || "NULL".equals(demoData.getR())) ? null : Long.parseLong(demoData.getR());
+                        Custom custom = customMap.get(customName);
+
+                        if (groupCompanyId == null && subGroupCompanyId == null) {
+                            continue;
+                        }
+                        if (custom == null) {
+                            log.error(customName + "不存在");
+                            continue;
+                        }
+
+                        if (subGroupCompanyId != null && groupCompanyId == null) {
+                            SubGroupCompany subGroupCompany = subGroupCompanyMap.get(subGroupCompanyId);
+                            if (subGroupCompany == null) {
+                                log.error(customName + " subGroupCompanyId=" + subGroupCompanyId + " 找不到A");
+                            } else {
+                                groupCompanyId = subGroupCompany.getGroupCompanyId();
+                            }
+                        }
+
+                        custom.setGroupCompanyId(groupCompanyId);
+                        custom.setSubGroupCompanyId(subGroupCompanyId);
+                        customService.updateGroupCompanyId(custom);
+//                        log.info("已更改 " + customName + " groupCompanyId=" + groupCompanyId + ",subGroupCompanyId=" + subGroupCompanyId);
+
                     } catch (Exception e) {
                         log.error("read excel error.{}", demoData, e);
                     }
