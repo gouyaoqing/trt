@@ -94,17 +94,29 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
         String notExistCustom = saleDetailData.stream()
                 .map(SaleDetailExcel::getCustom)
                 .map(Custom::getName)
+                .map(name -> {
+                    name = name.replace("（", "(");
+                    name = name.replace("）", ")");
+                    return name;
+                })
                 .filter(customName -> !customMap.containsKey(customName))
+                .distinct()
                 .collect(Collectors.joining(","));
+
+
         if (notExistCustom.length() > 0) {
             log.error("客户不存在。" + notExistCustom);
             throw new IllegalAccessException("客户不存在" + notExistCustom);
         }
 
+
+
         saleDetailService.deleteByExcelName(excelName);
 
         saleDetailData.forEach(saleDetailExcel -> {
             try {
+                Custom custom = customMap.get(saleDetailExcel.getCustom().getName().replace("（","(").replace("）",")"));
+
                 MedicineBatch medicineBatch = new MedicineBatch()
                         .setMedicineId(saleDetailExcel.getMedicine().getId())
                         .setLotNumber(ZHI_GONG_MEDICINE_BATCH_CODE);
@@ -113,7 +125,7 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
 
                 SaleDetail saleDetail = new SaleDetail();
                 saleDetail.setDealerId(dealer.getId());
-                saleDetail.setCustomId(customMap.get(saleDetailExcel.getCustom().getName()).getId());
+                saleDetail.setCustomId(custom.getId());
                 saleDetail.setMedicineBatchId(medicineBatch.getId());
                 saleDetail.setZhiGong(true);
                 saleDetail.setExcel(excelName);
