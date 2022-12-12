@@ -34,5 +34,7 @@ public class ExcelDemo {
     private Double minPrice;
     private Double saleAmountDouble;
     private String department;
+    private String huanCai;
+    private String yuYao;
     private String businessType;
 }

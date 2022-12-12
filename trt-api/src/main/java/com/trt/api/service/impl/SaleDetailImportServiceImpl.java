@@ -110,12 +110,11 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
         }
 
 
-
         saleDetailService.deleteByExcelName(excelName);
 
         saleDetailData.forEach(saleDetailExcel -> {
             try {
-                Custom custom = customMap.get(saleDetailExcel.getCustom().getName().replace("（","(").replace("）",")"));
+                Custom custom = customMap.get(saleDetailExcel.getCustom().getName().replace("（", "(").replace("）", ")"));
 
                 MedicineBatch medicineBatch = new MedicineBatch()
                         .setMedicineId(saleDetailExcel.getMedicine().getId())
@@ -226,7 +225,9 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
                                 .setInitSpecification(demoData.getMedicineInitSpecification())
                                 .setUnit(demoData.getMedicineUnit())
                                 .setPackingPcs(demoData.getPackingPcs())
-                                .setDepartment(demoData.getDepartment());
+                                .setDepartment(demoData.getDepartment())
+                                .setHuanCai(demoData.getHuanCai())
+                                .setYuYao300("是".equals(demoData.getYuYao()));
                         saleDetailExcel.setMedicine(medicine);
 
                         saleDetailExcel.setSaleNum(demoData.getSaleNum())

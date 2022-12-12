@@ -7,6 +7,7 @@ import com.trt.common.data.mapper.MedicineMapper;
 import com.trt.common.data.model.Custom;
 import com.trt.common.data.model.Medicine;
 import com.trt.common.data.service.MedicineService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
+@Slf4j
 public class MedicineServiceImpl implements MedicineService {
     @Resource
     private MedicineMapper medicineMapper;
@@ -31,7 +33,10 @@ public class MedicineServiceImpl implements MedicineService {
             medicine.setId(dbMedicine.getId());
             return 1;
         }
-
+        if ("是".equals(medicine.getHuanCai())) {
+            log.error("{} {} 幻彩需要填充", medicine.getCode(), medicine.getName());
+            return 0;
+        }
         return medicineMapper.insert(medicine);
     }
 

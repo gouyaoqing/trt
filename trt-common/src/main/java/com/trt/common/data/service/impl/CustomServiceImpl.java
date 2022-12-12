@@ -6,6 +6,7 @@ import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.CustomMapper;
 import com.trt.common.data.model.Custom;
 import com.trt.common.data.service.CustomService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
+@Slf4j
 public class CustomServiceImpl implements CustomService {
     @Resource
     private CustomMapper customMapper;
@@ -29,12 +31,20 @@ public class CustomServiceImpl implements CustomService {
         if (dbCustom != null) {
             custom.setId(dbCustom.getId());
 
-            if (custom.getBusinessType() != null) {
+            if (!custom.getName().equals(dbCustom.getName())) {
+                log.error("custom {} 改为 {}", dbCustom.getName(), custom.getName());
                 UpdateWrapper<Custom> updateWrapper = new UpdateWrapper();
                 updateWrapper.eq("id", custom.getId());
-                updateWrapper.set("business_type", custom.getBusinessType());
+                updateWrapper.set("name", custom.getName());
                 customMapper.update(dbCustom, updateWrapper);
             }
+
+//            if (custom.getBusinessType() != null) {
+//                UpdateWrapper<Custom> updateWrapper = new UpdateWrapper();
+//                updateWrapper.eq("id", custom.getId());
+//                updateWrapper.set("business_type", custom.getBusinessType());
+//                customMapper.update(dbCustom, updateWrapper);
+//            }
             return 1;
         }
 
