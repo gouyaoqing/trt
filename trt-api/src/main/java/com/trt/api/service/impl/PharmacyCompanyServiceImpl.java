@@ -7,13 +7,13 @@ import com.trt.api.service.PharmacyCompanyService;
 import com.trt.common.data.model.GroupCompany;
 import com.trt.common.data.model.Pharmacy;
 import com.trt.common.data.service.PharmacyService;
-import javafx.util.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -185,7 +185,7 @@ public class PharmacyCompanyServiceImpl implements PharmacyCompanyService {
                         pharmacy.setAroundOfficeCount(storeAroundDto.getString("office") == null ? 0 : Integer.parseInt(storeAroundDto.getString("office")));
                     }
 
-                    results.add(new Pair<>(groupCompany, pharmacy));
+                    results.add(Pair.of(groupCompany, pharmacy));
                 }
             }
 
