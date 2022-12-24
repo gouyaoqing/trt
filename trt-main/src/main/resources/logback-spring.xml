@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="trt"/>
+    <property name="LOG_HOME" value="/export/Logs/${APP_NAME}"/>
+    <property name="LOG_NAME" value="${APP_NAME}"/>
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wex"
+                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wEx"
+                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="${CONSOLE_LOG_PATTERN:-%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+    <appender name="consoleLog" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                ${CONSOLE_LOG_PATTERN}
+            </pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="!dev">
+
+        <property name="FILE_LOG_PATTERN"
+                  value="${FILE_LOG_PATTERN:-%d{yyyy-MM-dd HH:mm:ss.SSS} ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } --- [%t] %-40.40logger{39} : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
+
+        <appender name="fileInfoLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <encoder>
+                <pattern>
+                    ${FILE_LOG_PATTERN}
+                </pattern>
+            </encoder>
+            <file>${LOG_HOME}/${LOG_NAME}-all.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>
+                    <!--%d 日期格式 %i 指定Rolling时的序号-->
+                    ${LOG_HOME}/backup/${LOG_NAME}-log-all-%d{yyyy-MM-dd}.%i.log
+                </fileNamePattern>
+                <maxHistory>20</maxHistory>
+                <maxFileSize>200MB</maxFileSize>
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
+        </appender>
+
+        <appender name="fileErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>ERROR</level>
+            </filter>
+            <encoder>
+                <pattern>
+                    ${FILE_LOG_PATTERN}
+                </pattern>
+            </encoder>
+            <file>${LOG_HOME}/${LOG_NAME}-error.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>
+                    ${LOG_HOME}/backup/${LOG_NAME}-log-error-%d{yyyy-MM-dd}.%i.log
+                </fileNamePattern>
+                <maxHistory>20</maxHistory>
+                <maxFileSize>200MB</maxFileSize>
+                <totalSizeCap>1GB</totalSizeCap>
+            </rollingPolicy>
+        </appender>
+
+        <root level="${logging.level.root}">
+            <appender-ref ref="consoleLog"/>
+            <appender-ref ref="fileInfoLog"/>
+            <appender-ref ref="fileErrorLog"/>
+        </root>
+
+    </springProfile>
+
+    <springProfile name="dev">
+        <root level="${logging.level.root}">
+            <appender-ref ref="consoleLog"/>
+        </root>
+    </springProfile>
+
+    <logger name="com.ibatis" level="DEBUG" />
+    <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" />
+    <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" />
+    <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" />
+    <logger name="java.sql.Connection" level="DEBUG" />
+    <logger name="java.sql.Statement" level="DEBUG" />
+    <logger name="java.sql.PreparedStatement" level="DEBUG" />
+    <logger name="java.sql.ResultSet" level="DEBUG" />
+    <logger name="com.jd.mlaas.sentinel.common.data.dao" level="DEBUG"/>
+</configuration>
