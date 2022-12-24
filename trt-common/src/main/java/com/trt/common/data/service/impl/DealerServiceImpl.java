@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,6 +39,14 @@ public class DealerServiceImpl implements DealerService {
         Dealer whereDealer = new Dealer().setCode(code);
         QueryWrapper<Dealer> wrapper = new QueryWrapper<Dealer>(whereDealer);
         return Optional.ofNullable(dealerMapper.selectOne(wrapper));
+    }
+
+    @Override
+    public List<Dealer> findByKeyword(String keyword) {
+        QueryWrapper<Dealer> wrapper = new QueryWrapper<Dealer>();
+        wrapper.like("name", keyword);
+        wrapper.last("limit 100");
+        return dealerMapper.selectList(wrapper);
     }
 
 }

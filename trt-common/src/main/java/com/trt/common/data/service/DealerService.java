@@ -3,6 +3,7 @@ package com.trt.common.data.service;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.model.Dealer;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DealerService {
@@ -10,4 +11,5 @@ public interface DealerService {
 
     Optional<Dealer> findByCode(String code);
 
+    List<Dealer> findByKeyword(String keyword);
 }
