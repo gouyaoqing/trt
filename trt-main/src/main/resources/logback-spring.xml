@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <configuration>
     <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="trt"/>
-    <property name="LOG_HOME" value="/export/Logs/${APP_NAME}"/>
+    <property name="LOG_HOME" value="Users/export/Logs/${APP_NAME}"/>
     <property name="LOG_NAME" value="${APP_NAME}"/>
 
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
@@ -78,13 +78,13 @@
         </root>
     </springProfile>
 
-    <logger name="com.ibatis" level="DEBUG" />
-    <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" />
-    <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" />
-    <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" />
-    <logger name="java.sql.Connection" level="DEBUG" />
-    <logger name="java.sql.Statement" level="DEBUG" />
-    <logger name="java.sql.PreparedStatement" level="DEBUG" />
-    <logger name="java.sql.ResultSet" level="DEBUG" />
-    <logger name="com.jd.mlaas.sentinel.common.data.dao" level="DEBUG"/>
+<!--    <logger name="com.ibatis" level="DEBUG" />-->
+<!--    <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" />-->
+<!--    <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" />-->
+<!--    <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" />-->
+<!--    <logger name="java.sql.Connection" level="DEBUG" />-->
+<!--    <logger name="java.sql.Statement" level="DEBUG" />-->
+<!--    <logger name="java.sql.PreparedStatement" level="DEBUG" />-->
+<!--    <logger name="java.sql.ResultSet" level="DEBUG" />-->
+<!--    <logger name="com.jd.mlaas.sentinel.common.data.dao" level="DEBUG"/>-->
 </configuration>
