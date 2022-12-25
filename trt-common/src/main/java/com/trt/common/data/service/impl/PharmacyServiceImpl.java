@@ -78,7 +78,11 @@ public class PharmacyServiceImpl implements PharmacyService {
             queryWrapper.eq("district", query.getDistrict());
         }
 
-        queryWrapper.last(" limit 200");
+        if (StringUtils.isNotBlank(query.getStreet())) {
+            queryWrapper.eq("street", query.getStreet());
+        }
+
+        queryWrapper.last(" limit 100");
 
         return pharmacyMapper.selectList(queryWrapper);
     }
