@@ -6,6 +6,7 @@ import com.trt.common.data.mapper.GroupCompanyMapper;
 import com.trt.common.data.mapper.PharmacyMapper;
 import com.trt.common.data.model.GroupCompany;
 import com.trt.common.data.model.Pharmacy;
+import com.trt.common.data.model.query.QPharmacy;
 import com.trt.common.data.service.GroupCompanyService;
 import com.trt.common.data.service.PharmacyService;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author gouyaoqing
@@ -50,5 +53,27 @@ public class PharmacyServiceImpl implements PharmacyService {
         }
 
         return getOrInsert(pharmacy);
+    }
+
+    @Override
+    public List<Pharmacy> query(QPharmacy query) {
+        if (query == null) {
+            return Collections.emptyList();
+        }
+
+        QueryWrapper<Pharmacy> queryWrapper = new QueryWrapper<Pharmacy>();
+        if (StringUtils.isNotBlank(query.getKeyword())) {
+            queryWrapper.like("name", query.getKeyword());
+        }
+
+        if (StringUtils.isNotBlank(query.getProvince())) {
+            queryWrapper.eq("province", query.getProvince());
+        }
+
+        if (StringUtils.isNotBlank(query.getCity())) {
+            queryWrapper.eq("city", query.getCity());
+        }
+
+        return pharmacyMapper.selectList(queryWrapper);
     }
 }

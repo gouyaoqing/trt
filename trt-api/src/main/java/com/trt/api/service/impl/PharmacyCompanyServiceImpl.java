@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.trt.api.service.PharmacyCompanyService;
 import com.trt.common.data.model.GroupCompany;
 import com.trt.common.data.model.Pharmacy;
+import com.trt.common.data.model.query.QPharmacy;
 import com.trt.common.data.service.PharmacyService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
