@@ -11,4 +11,6 @@ public class QPharmacy {
     private String province;
 
     private String city;
+
+    private String district;
 }

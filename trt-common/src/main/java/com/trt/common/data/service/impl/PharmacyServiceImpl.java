@@ -74,6 +74,10 @@ public class PharmacyServiceImpl implements PharmacyService {
             queryWrapper.eq("city", query.getCity());
         }
 
+        if (StringUtils.isNotBlank(query.getDistrict())) {
+            queryWrapper.eq("district", query.getDistrict());
+        }
+
         return pharmacyMapper.selectList(queryWrapper);
     }
 }

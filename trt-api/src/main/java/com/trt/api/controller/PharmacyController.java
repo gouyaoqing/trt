@@ -15,7 +15,7 @@ public class PharmacyController {
     private PharmacyService pharmacyService;
 
     @GetMapping("/pharmacies")
-    public ResponseEntity<ResponseDTO<?>> query(@RequestParam("keyword") String keyword, @RequestParam("province") String province, @RequestParam("city") String city) {
-        return ResponseUtils.success(pharmacyService.query(new QPharmacy().setKeyword(keyword).setProvince(province).setCity(city)));
+    public ResponseEntity<ResponseDTO<?>> query(@RequestParam("keyword") String keyword, @RequestParam("province") String province, @RequestParam("city") String city, @RequestParam("district") String district) {
+        return ResponseUtils.success(pharmacyService.query(new QPharmacy().setKeyword(keyword).setProvince(province).setCity(city).setDistrict(district)));
     }
 }
