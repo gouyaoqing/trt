@@ -18,8 +18,9 @@ public class PharmacyController {
     public ResponseEntity<ResponseDTO<?>> query(@RequestParam("keyword") String keyword,
                                                 @RequestParam("province") String province,
                                                 @RequestParam("city") String city,
-                                                @RequestParam("district") String district,
-                                                @RequestParam("street") String street) {
+                                                @RequestParam("street") String street,
+                                                @RequestParam("district") String district
+                                                ) {
         return ResponseUtils.success(pharmacyService.query(new QPharmacy().setKeyword(keyword).setProvince(province).setCity(city).setDistrict(district).setStreet(street)));
     }
 }
