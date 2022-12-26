@@ -20,8 +20,7 @@ public class PharmacyController {
                                                 @RequestParam("city") String city,
                                                 @RequestParam("street") String street,
                                                 @RequestParam("district") String district,
-                                                @RequestParam("limit") Integer limit
-    ) {
+                                                @RequestParam("limit") Integer limit) {
         return ResponseUtils.success(pharmacyService.query(new QPharmacy().setKeyword(keyword)
                         .setProvince(province)
                         .setCity(city)
