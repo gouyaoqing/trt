@@ -15,5 +15,5 @@ public interface PharmacyService {
 
     int getOrInsert(Pharmacy pharmacy, GroupCompany groupCompany);
 
-    List<Pharmacy> query(QPharmacy query);
+    List<Pharmacy> query(QPharmacy query,Integer limit);
 }

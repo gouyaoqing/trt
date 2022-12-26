@@ -56,7 +56,7 @@ public class PharmacyServiceImpl implements PharmacyService {
     }
 
     @Override
-    public List<Pharmacy> query(QPharmacy query) {
+    public List<Pharmacy> query(QPharmacy query, Integer limit) {
         if (query == null) {
             return Collections.emptyList();
         }
@@ -82,7 +82,9 @@ public class PharmacyServiceImpl implements PharmacyService {
             queryWrapper.eq("street", query.getStreet());
         }
 
-        queryWrapper.last(" limit 100");
+        if (limit != null && limit != 0) {
+            queryWrapper.last(" limit " + limit);
+        }
 
         return pharmacyMapper.selectList(queryWrapper);
     }
