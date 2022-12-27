@@ -86,8 +86,8 @@ public class MedicineServiceImpl implements MedicineService {
             queryWrapper.eq("huan_cai", query.getHuanCai());
         }
 
-        if (query.getYuYao300() != null) {
-            queryWrapper.eq("yu_yao_300", query.getYuYao300());
+        if (StringUtils.isNotBlank(query.getDepartment())) {
+            queryWrapper.eq("department", query.getDepartment());
         }
 
         if (limit != null && limit > 0) {
@@ -113,5 +113,14 @@ public class MedicineServiceImpl implements MedicineService {
 
         List<Medicine> medicines = medicineMapper.selectList(queryWrapper);
         return medicines.stream().filter(Objects::nonNull).map(Medicine::getHuanCai).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> queryDepartment() {
+        QueryWrapper<Medicine> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("DISTINCT department");
+
+        List<Medicine> medicines = medicineMapper.selectList(queryWrapper);
+        return medicines.stream().filter(Objects::nonNull).map(Medicine::getDepartment).collect(Collectors.toList());
     }
 }

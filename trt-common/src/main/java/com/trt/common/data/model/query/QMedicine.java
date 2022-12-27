@@ -14,5 +14,5 @@ public class QMedicine {
 
     private String huanCai;
 
-    private Boolean yuYao300;
+    private String department;
 }

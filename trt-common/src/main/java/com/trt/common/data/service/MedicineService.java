@@ -19,4 +19,6 @@ public interface MedicineService {
     Map<String, List<String>> queryCategory();
 
     List<String> queryHuanCai();
+
+    List<String> queryDepartment();
 }

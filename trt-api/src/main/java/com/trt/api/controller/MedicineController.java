@@ -1,5 +1,6 @@
 package com.trt.api.controller;
 
+import com.trt.api.model.SelectorRange;
 import com.trt.common.data.model.api.ResponseDTO;
 import com.trt.common.data.model.query.QMedicine;
 import com.trt.common.data.service.MedicineService;
@@ -10,6 +11,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class MedicineController {
@@ -21,22 +25,33 @@ public class MedicineController {
                                                 @RequestParam("category1") String category1,
                                                 @RequestParam("category2") String category2,
                                                 @RequestParam("huan_cai") String huanCai,
-                                                @RequestParam("yu_yao_300") Boolean yuYao300,
+                                                @RequestParam("department") String department,
                                                 @RequestParam("limit") Integer limit) {
         return ResponseUtils.success(medicineService.query(new QMedicine().setKeyword(keyword)
                 .setCategory1(category1)
                 .setCategory2(category2)
                 .setHuanCai(huanCai)
-                .setYuYao300(yuYao300), limit));
+                .setDepartment(department), limit));
     }
 
     @GetMapping("/medicine/categories")
     public ResponseEntity<ResponseDTO<?>> queryCategory() {
-        return ResponseUtils.success(medicineService.queryCategory());
+        Map<String, List<String>> categoryMap = medicineService.queryCategory();
+
+        return ResponseUtils.success(categoryMap.entrySet().stream()
+                .map(entry -> new SelectorRange()
+                        .setLabel(entry.getKey())
+                        .setChildren(entry.getValue().stream().map(childStr -> new SelectorRange().setLabel(childStr)).collect(Collectors.toList())))
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("/medicine/huan-cai")
     public ResponseEntity<ResponseDTO<?>> queryHuanCai() {
         return ResponseUtils.success(medicineService.queryHuanCai());
+    }
+
+    @GetMapping("/medicine/departments")
+    public ResponseEntity<ResponseDTO<?>> queryDepartment() {
+        return ResponseUtils.success(medicineService.queryDepartment());
     }
 }
