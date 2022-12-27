@@ -86,4 +86,9 @@ public class Medicine {
      */
     @TableField("yu_yao_300")
     private Boolean yuYao300;
+
+    /**
+     * 防疫用药
+     */
+    private Boolean fangYi;
 }

@@ -60,4 +60,17 @@ public class MedicineServiceImpl implements MedicineService {
 
         return medicineMapper.update(medicine, wrapper);
     }
+
+    @Override
+    public List<Medicine> query(String keyword, Integer limit) {
+        QueryWrapper<Medicine> queryWrapper = new QueryWrapper<>();
+
+        if (StringUtils.isNotBlank(keyword)) {
+            queryWrapper.like("name", keyword);
+        }
+        if (limit != null && limit > 0) {
+            queryWrapper.last(" limit " + limit);
+        }
+        return medicineMapper.selectList(queryWrapper);
+    }
 }

@@ -11,4 +11,6 @@ public interface MedicineService {
     List<Medicine> findAll();
 
     int updateSameField(Medicine medicine);
+
+    List<Medicine> query(String keyword, Integer limit);
 }
