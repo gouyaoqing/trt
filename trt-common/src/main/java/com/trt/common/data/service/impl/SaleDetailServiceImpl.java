@@ -43,6 +43,6 @@ public class SaleDetailServiceImpl implements SaleDetailService {
 
     @Override
     public SaleDetailSumResult querySaleDetailTotal(QSaleDetail query) {
-        return null;
+        return saleDetailMapper.querySaleDetailTotal(query);
     }
 }

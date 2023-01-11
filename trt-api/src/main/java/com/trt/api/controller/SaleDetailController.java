@@ -35,7 +35,7 @@ public class SaleDetailController {
         return "success";
     }
 
-    @PostMapping("/sale-detal")
+    @PostMapping("/sale-detail/total")
     public ResponseEntity<ResponseDTO<?>> querySaleDetail(@RequestBody QSaleDetail query) {
         return ResponseUtils.success(saleDetailService.querySaleDetailTotal(query));
     }
