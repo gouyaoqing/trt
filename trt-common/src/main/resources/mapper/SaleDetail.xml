@@ -26,8 +26,8 @@
 
     <select id="querySaleDetailTotal" resultType="com.trt.common.data.model.api.SaleDetailSumResult">
         select
-            sum(sale_detail_2022.sale_amount),
-            sum(sale_detail_2022.package_num)
+            sum(sale_detail_2022.sale_amount) as `saleAmount`,
+            sum(sale_detail_2022.package_num) as `packageNum`
         from sale_detail_2022
         join custom on(sale_detail_2022.custom_id = custom.id)
         <where>
