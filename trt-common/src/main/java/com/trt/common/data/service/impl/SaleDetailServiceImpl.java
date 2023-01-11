@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.SaleDetailMapper;
 import com.trt.common.data.model.SaleDetail;
+import com.trt.common.data.model.api.SaleDetailSumResult;
+import com.trt.common.data.model.query.QSaleDetail;
 import com.trt.common.data.service.SaleDetailService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,5 +31,18 @@ public class SaleDetailServiceImpl implements SaleDetailService {
         where.setExcel(excelName);
         UpdateWrapper<SaleDetail> updateWrapper = new UpdateWrapper<SaleDetail>(where);
         return saleDetailMapper.delete(updateWrapper);
+    }
+
+    @Override
+    public int updateCustomId(Long oldCustomId, Long newCustomId) {
+        UpdateWrapper<SaleDetail> updateWrapper = new UpdateWrapper<SaleDetail>();
+        updateWrapper.eq("custom_id", oldCustomId);
+        updateWrapper.set("custom_id", newCustomId);
+        return saleDetailMapper.update(null, updateWrapper);
+    }
+
+    @Override
+    public SaleDetailSumResult querySaleDetailTotal(QSaleDetail query) {
+        return null;
     }
 }

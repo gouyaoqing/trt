@@ -27,7 +27,7 @@ public class SaleDetail {
     /**
      * 客户id
      */
-    private Long CustomId;
+    private Long customId;
     /**
      * 药品批次id
      */

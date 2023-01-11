@@ -38,6 +38,9 @@ spring:
     url: jdbc:mysql://sh-cynosdbmysql-grp-p8m8azco.sql.tencentcdb.com:28480/trt
     username: root
     password: Eqn92Z7J
+#    url: jdbc:mysql://localhost:3306/trt
+#    username: root
+#    password: gouyaoqing
     driver-class-name: com.mysql.cj.jdbc.Driver
 #    type: com.alibaba.druid.pool.DruidDataSource
     druid:

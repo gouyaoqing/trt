@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.trt.common.data.mapper.SaleDetailMapper">
+    <resultMap id="baseResultMap" type="com.trt.common.data.model.SaleDetail">
+        <result column="id" property="id"/>
+        <result column="dealer_id" property="dealerId"/>
+        <result column="custom_id" property="CustomId"/>
+        <result column="medicine_batch_id" property="medicineBatchId"/>
+        <result column="sale_date" property="saleDate"/>
+        <result column="sale_num" property="saleNum"/>
+        <result column="sale_price" property="salePrice"/>
+        <result column="sale_amount" property="saleAmount"/>
+        <result column="sale_amount_double" property="saleAmountDouble"/>
+        <result column="min_unit" property="minUnit"/>
+        <result column="min_num" property="minNum"/>
+
+        <result column="package_num" property="packageNum"/>
+        <result column="min_price" property="minPrice"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="excel" property="excel"/>
+        <result column="zhi_gong" property="zhiGong"/>
+    </resultMap>
+
+    <select id="querySaleDetailTotal" resultType="com.trt.common.data.model.api.SaleDetailSumResult">
+        select
+            sum(sale_detail_2022.sale_amount),
+            sum(sale_detail_2022.package_num)
+        from sale_detail_2022
+        join dealer on(sale_detail_2022.dealer_id = dealer.id)
+        join custom on(sale_detail_2022.custom_id = custom.id)
+        join trt.medicine_batch on(trt.sale_detail_2022.medicine_batch_id = trt.medicine_batch.id)
+        join trt.medicine on(trt.medicine_batch.medicine_id=trt.medicine.id)
+        <where>
+            <if test="query.customBusinessType != null and query.customBusinessType != ''">
+                custom.business_type = #{query.customBusinessType}
+            </if>
+        </where>
+    </select>
+</mapper>

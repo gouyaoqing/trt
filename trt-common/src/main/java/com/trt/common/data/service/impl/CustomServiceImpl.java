@@ -5,20 +5,28 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.CustomMapper;
 import com.trt.common.data.model.Custom;
+import com.trt.common.data.model.Medicine;
 import com.trt.common.data.service.CustomService;
+import com.trt.common.data.service.SaleDetailService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class CustomServiceImpl implements CustomService {
     @Resource
     private CustomMapper customMapper;
+
+    @Resource
+    private SaleDetailService saleDetailService;
 
     @Override
     public int getOrInsert(Custom custom) throws BusinessException {
@@ -27,16 +35,42 @@ public class CustomServiceImpl implements CustomService {
         }
 
         QueryWrapper<Custom> wrapper = new QueryWrapper<Custom>(new Custom().setCode(custom.getCode()));
-        Custom dbCustom = customMapper.selectOne(wrapper);
-        if (dbCustom != null) {
-            custom.setId(dbCustom.getId());
+        Custom dbCodeCustom = customMapper.selectOne(wrapper);
+        if (dbCodeCustom != null) {
+            custom.setId(dbCodeCustom.getId());
 
-            if (!custom.getName().equals(dbCustom.getName())) {
-                log.error("custom {} 改为 {}", dbCustom.getName(), custom.getName());
-                UpdateWrapper<Custom> updateWrapper = new UpdateWrapper();
-                updateWrapper.eq("id", custom.getId());
-                updateWrapper.set("name", custom.getName());
-                customMapper.update(dbCustom, updateWrapper);
+            if (!custom.getName().equals(dbCodeCustom.getName())) {
+
+                //咱就是说，根据code查出来的名字不一样了，先看看新名字存不存在
+                QueryWrapper<Custom> nameWrapper = new QueryWrapper<Custom>(new Custom().setName(custom.getName()));
+                Custom newNameCustom = customMapper.selectOne(nameWrapper);
+                if (newNameCustom != null) {
+                    //如果相同名字的custom存在那就是说，合二为一，删一个改一个，留code的
+                    log.error("新custom " + custom.getCode() + "_" + custom.getName() + " 已存在的code " + dbCodeCustom.getCode() + "_" + dbCodeCustom.getName() + " 已存在的name" + newNameCustom.getCode() + "_" + newNameCustom.getName());
+
+                    //先把销售数据改了
+                    int count = saleDetailService.updateCustomId(newNameCustom.getId(), dbCodeCustom.getId());
+                    log.error("修改了销售数据" + count + "条");
+                    //先把相同名字的删掉
+                    UpdateWrapper<Custom> updateDeleteWrapper = new UpdateWrapper<Custom>();
+                    updateDeleteWrapper.eq("id", newNameCustom.getId());
+                    updateDeleteWrapper.set("name", newNameCustom.getName() + "_delete");
+                    updateDeleteWrapper.set("code", newNameCustom.getCode() + "_delete");
+                    customMapper.update(null, updateDeleteWrapper);
+
+                    //再改code那个为新的名字
+                    UpdateWrapper<Custom> updateWrapper = new UpdateWrapper<Custom>();
+                    updateWrapper.eq("id", dbCodeCustom.getId());
+                    updateWrapper.set("name", custom.getName());
+                    customMapper.update(null, updateWrapper);
+                } else {
+                    log.error("custom {} 改为 {}", dbCodeCustom.getName(), custom.getName());
+                    UpdateWrapper<Custom> updateWrapper = new UpdateWrapper<Custom>();
+                    updateWrapper.eq("id", dbCodeCustom.getId());
+                    updateWrapper.set("name", custom.getName());
+                    customMapper.update(null, updateWrapper);
+                }
+
             }
 
 //            if (custom.getBusinessType() != null) {
@@ -46,9 +80,22 @@ public class CustomServiceImpl implements CustomService {
 //                customMapper.update(dbCustom, updateWrapper);
 //            }
             return 1;
+        } else {
+            Custom newNameCustom = customMapper.selectOne(new QueryWrapper<Custom>(new Custom().setName(custom.getName())));
+
+            if (newNameCustom != null) {
+                UpdateWrapper<Custom> updateWrapper = new UpdateWrapper();
+                updateWrapper.eq("id", newNameCustom.getId());
+                updateWrapper.set("code", custom.getCode());
+                customMapper.update(newNameCustom, updateWrapper);
+                custom.setId(newNameCustom.getId());
+                return 1;
+            } else {
+                return customMapper.insert(custom);
+            }
         }
 
-        return customMapper.insert(custom);
+
     }
 
     @Override
@@ -103,5 +150,14 @@ public class CustomServiceImpl implements CustomService {
         }
 
         return customMapper.update(custom, wrapper);
+    }
+
+    @Override
+    public List<String> businessType() {
+        QueryWrapper<Custom> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("DISTINCT business_type");
+
+        List<Custom> customs = customMapper.selectList(queryWrapper);
+        return customs.stream().filter(Objects::nonNull).map(Custom::getBusinessType).collect(Collectors.toList());
     }
 }

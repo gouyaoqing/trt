@@ -16,4 +16,6 @@ public interface CustomService {
 
     int updateGroupCompanyId(Custom custom);
 
+    List<String> businessType();
+
 }
