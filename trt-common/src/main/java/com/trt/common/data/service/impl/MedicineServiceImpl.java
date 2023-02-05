@@ -123,4 +123,14 @@ public class MedicineServiceImpl implements MedicineService {
         List<Medicine> medicines = medicineMapper.selectList(queryWrapper);
         return medicines.stream().filter(Objects::nonNull).map(Medicine::getDepartment).collect(Collectors.toList());
     }
+
+    @Override
+    public Medicine findByCode(String code) {
+        if (StringUtils.isBlank(code)) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "medicine's code is not null");
+        }
+
+        QueryWrapper<Medicine> wrapper = new QueryWrapper<Medicine>(new Medicine().setCode(code));
+        return medicineMapper.selectOne(wrapper);
+    }
 }

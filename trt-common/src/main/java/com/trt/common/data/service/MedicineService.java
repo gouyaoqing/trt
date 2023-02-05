@@ -21,4 +21,6 @@ public interface MedicineService {
     List<String> queryHuanCai();
 
     List<String> queryDepartment();
+
+    Medicine findByCode(String code);
 }

@@ -10,11 +10,14 @@ import com.trt.common.data.model.*;
 import com.trt.common.data.service.*;
 import com.trt.common.utils.NumberUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BinaryOperator;
@@ -78,7 +81,7 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
 
     @Override
     public void importZhiGongByExcel(String excelPath, String excelName) throws IllegalAccessException {
-        Map<String, Custom> customMap = customService.findAll().stream().collect(Collectors.toMap(Custom::getName, Function.identity(), BinaryOperator.maxBy(Comparator.comparing(Custom::getId))));
+        Map<String, Custom> customMap = customService.findAll().stream().collect(Collectors.toMap(custom -> custom.getName().trim(), Function.identity(), BinaryOperator.maxBy(Comparator.comparing(Custom::getId))));
         Dealer dealer = new Dealer()
                 .setCode(ZHI_GONG_DEALER_CODE)
                 .setName("同仁堂科技公司")
@@ -116,20 +119,27 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
             try {
                 Custom custom = customMap.get(saleDetailExcel.getCustom().getName().replace("（", "(").replace("）", ")"));
 
+                if (saleDetailExcel.getMedicine().getCode() == null) {
+                    return;
+                }
+                Medicine medicine = medicineService.findByCode(saleDetailExcel.getMedicine().getCode());
+
                 MedicineBatch medicineBatch = new MedicineBatch()
-                        .setMedicineId(saleDetailExcel.getMedicine().getId())
+                        .setMedicineId(medicine.getId())
                         .setLotNumber(ZHI_GONG_MEDICINE_BATCH_CODE);
 
                 medicineBatchService.getOrInsert(medicineBatch);
 
                 SaleDetail saleDetail = new SaleDetail();
+                BeanUtils.copyProperties(saleDetailExcel, saleDetail);
+
                 saleDetail.setDealerId(dealer.getId());
                 saleDetail.setCustomId(custom.getId());
                 saleDetail.setMedicineBatchId(medicineBatch.getId());
                 saleDetail.setZhiGong(true);
+//                saleDetail.setPackageNum(BigDecimal.valueOf((double) saleDetailExcel.getSaleNum() / medicine.getPackingPcs()).setScale(2, RoundingMode.HALF_UP).doubleValue());
                 saleDetail.setExcel(excelName);
                 saleDetail.setSaleDate(saleDetailExcel.getSaleDate());
-                BeanUtils.copyProperties(saleDetailExcel, saleDetail);
 
                 saleDetailService.insert(saleDetail);
             } catch (Exception e) {
@@ -149,29 +159,25 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
             EasyExcel.read(excelPath, EasyExcelDemo.class, new PageReadListener<EasyExcelDemo>(dataList -> {
                 for (EasyExcelDemo data : dataList) {
                     try {
-                        if ("是".equals(data.getO())) {
+                        if (StringUtils.isNotBlank(data.getA()) && !data.getA().equals("客户名称")) {
                             SaleDetailExcel saleDetailExcel = new SaleDetailExcel();
                             result.add(saleDetailExcel);
 
                             Custom custom = new Custom()
-                                    .setArea(data.getD())
                                     .setName(data.getA());
                             saleDetailExcel.setCustom(custom);
 
                             saleDetailExcel.setMedicineBatch(null);
 
                             Medicine medicine = new Medicine();
-                            medicine.setName(data.getF());
-                            medicine.setCode(data.getS());
-                            medicine.setId(Long.parseLong(data.getR()));
-                            saleDetailExcel.setMedicine(medicine);
+                            medicine.setCode(data.getQ());
 
-                            saleDetailExcel.setSaleNum(new Double(Double.parseDouble(data.getK())).intValue())
-                                    .setSalePrice(Double.parseDouble(data.getI()))
-                                    .setSaleAmount(Double.parseDouble(data.getL()))
-                                    .setSaleDate(formatter.parse(data.getM()))
-                                    .setPackageNum(Double.parseDouble(data.getQ()))
-                                    .setSaleAmountDouble(Double.parseDouble(data.getL()))
+                            saleDetailExcel.setSaleNum(new Double(Double.parseDouble(data.getM())).intValue())
+                                    .setSalePrice(Double.parseDouble(data.getK()))
+                                    .setSaleAmount(Double.parseDouble(data.getN()))
+                                    .setSaleDate(formatter.parse(data.getO()))
+                                    .setSaleAmountDouble(Double.parseDouble(data.getN()))
+                                    .setMedicine(medicine)
                                     .setExcel(excelName);
                         }
                     } catch (Exception e) {
