@@ -3,9 +3,11 @@ package com.trt.api.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.trt.api.model.PharmacyInsertModel;
 import com.trt.api.service.PharmacyCompanyService;
 import com.trt.common.data.model.GroupCompany;
 import com.trt.common.data.model.Pharmacy;
+import com.trt.common.data.model.SubGroupCompany;
 import com.trt.common.data.model.query.QPharmacy;
 import com.trt.common.data.service.PharmacyService;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -45,18 +48,19 @@ public class PharmacyCompanyServiceImpl implements PharmacyCompanyService {
     @Override
     public void importPharmacyByNet(Integer cityNum, Integer pageNum, String token) {
         List<String> cities = getAllCities(token);
+        log.error("全部城市:{}", JSON.toJSON(cities));
         int pageSize = 500;
         String city = cities.get(cityNum);
         int currPage = pageNum <= 0 ? 1 : pageNum;
-        List<Pair<GroupCompany, Pharmacy>> list = Lists.newArrayList();
-        for (int i = 84; i <= cities.size(); i++) {
+        List<PharmacyInsertModel> list = Lists.newArrayList();
+        for (int i = cityNum; i < cities.size(); i++) {
             city = cities.get(i);
             cityNum = i;
             currPage = 1;
             do {
                 try {
                     list = getPharmacies(currPage, pageSize, city, token);
-                    list.forEach(pair -> pharmacyService.getOrInsert(pair.getValue(), pair.getKey()));
+                    list.forEach(pharmacyInsertModel -> pharmacyService.getOrInsert(pharmacyInsertModel.getPharmacy(), pharmacyInsertModel.getGroupCompany(), pharmacyInsertModel.getSubGroupCompany()));
 
                     log.error("第{}个城市 {} 的第{}页已完成", cityNum, city, currPage);
                     currPage++;
@@ -69,6 +73,11 @@ public class PharmacyCompanyServiceImpl implements PharmacyCompanyService {
 //                if (list.size() < pageSize) {
 //                    break;
 //                }
+                    try {
+                        Thread.sleep(Duration.ofSeconds(30).toMillis());
+                    } catch (InterruptedException e) {
+
+                    }
                 }
 
             } while (true);
@@ -128,10 +137,10 @@ public class PharmacyCompanyServiceImpl implements PharmacyCompanyService {
         private Integer pageSize = 500;
     }
 
-    private List<Pair<GroupCompany, Pharmacy>> getPharmacies(int pageNum, int pageSize, String city, String token) {
+    private List<PharmacyInsertModel> getPharmacies(int pageNum, int pageSize, String city, String token) {
         String url = "https://ydt.sinohealth.com/pharmacy-center/data/store/map/info";
 
-        List<Pair<GroupCompany, Pharmacy>> results = Lists.newArrayList();
+        List<PharmacyInsertModel> results = Lists.newArrayList();
         CloseableHttpClient httpClient = HttpClients.createDefault();
         RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build();
         try {
@@ -155,10 +164,15 @@ public class PharmacyCompanyServiceImpl implements PharmacyCompanyService {
                     JSONObject content = list.getJSONObject(i);
 
                     GroupCompany groupCompany = null;
+                    SubGroupCompany subGroupCompany = null;
                     Pharmacy pharmacy = new Pharmacy();
                     if (StringUtils.isNotBlank(content.getString("chn"))) {
                         groupCompany = new GroupCompany();
                         groupCompany.setName(content.getString("chn"));
+                    }
+                    if (StringUtils.isNotBlank(content.getString("parentName"))) {
+                        subGroupCompany = new SubGroupCompany();
+                        subGroupCompany.setName(content.getString("parentName"));
                     }
                     pharmacy.setAddress(content.getString("address"));
                     pharmacy.setArea(content.getString("area"));
@@ -186,7 +200,7 @@ public class PharmacyCompanyServiceImpl implements PharmacyCompanyService {
                         pharmacy.setAroundOfficeCount(storeAroundDto.getString("office") == null ? 0 : Integer.parseInt(storeAroundDto.getString("office")));
                     }
 
-                    results.add(Pair.of(groupCompany, pharmacy));
+                    results.add(new PharmacyInsertModel().setPharmacy(pharmacy).setGroupCompany(groupCompany).setSubGroupCompany(subGroupCompany));
                 }
             }
 

@@ -26,6 +26,10 @@ public class Pharmacy {
      */
     private Long groupCompanyId;
     /**
+     * 所属子连锁店id
+     */
+    private Long subGroupCompanyId;
+    /**
      * 药店名称
      */
     @NotBlank

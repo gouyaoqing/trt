@@ -6,9 +6,11 @@ import com.trt.common.data.mapper.GroupCompanyMapper;
 import com.trt.common.data.mapper.PharmacyMapper;
 import com.trt.common.data.model.GroupCompany;
 import com.trt.common.data.model.Pharmacy;
+import com.trt.common.data.model.SubGroupCompany;
 import com.trt.common.data.model.query.QPharmacy;
 import com.trt.common.data.service.GroupCompanyService;
 import com.trt.common.data.service.PharmacyService;
+import com.trt.common.data.service.SubGroupCompanyService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,9 @@ public class PharmacyServiceImpl implements PharmacyService {
     @Resource
     private GroupCompanyService groupCompanyService;
 
+    @Resource
+    private SubGroupCompanyService subGroupCompanyService;
+
     @Override
     public int getOrInsert(Pharmacy pharmacy) {
         if (StringUtils.isBlank(pharmacy.getName())) {
@@ -46,10 +51,16 @@ public class PharmacyServiceImpl implements PharmacyService {
     }
 
     @Override
-    public int getOrInsert(Pharmacy pharmacy, GroupCompany groupCompany) {
+    public int getOrInsert(Pharmacy pharmacy, GroupCompany groupCompany, SubGroupCompany subGroupCompany) {
         if (groupCompany != null && StringUtils.isNotBlank(groupCompany.getName())) {
             groupCompanyService.getOrInsert(groupCompany);
             pharmacy.setGroupCompanyId(groupCompany.getId());
+        }
+
+        if (subGroupCompany != null && groupCompany != null && groupCompany.getId() != null && StringUtils.isNotBlank(subGroupCompany.getName())) {
+            subGroupCompany.setGroupCompanyId(groupCompany.getId());
+            subGroupCompanyService.getOrInsert(subGroupCompany);
+            pharmacy.setSubGroupCompanyId(subGroupCompany.getId());
         }
 
         return getOrInsert(pharmacy);

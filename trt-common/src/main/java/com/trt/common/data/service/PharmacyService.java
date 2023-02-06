@@ -2,6 +2,7 @@ package com.trt.common.data.service;
 
 import com.trt.common.data.model.GroupCompany;
 import com.trt.common.data.model.Pharmacy;
+import com.trt.common.data.model.SubGroupCompany;
 import com.trt.common.data.model.query.QPharmacy;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface PharmacyService {
     int getOrInsert(Pharmacy pharmacy);
 
-    int getOrInsert(Pharmacy pharmacy, GroupCompany groupCompany);
+    int getOrInsert(Pharmacy pharmacy, GroupCompany groupCompany, SubGroupCompany subGroupCompany);
 
     List<Pharmacy> query(QPharmacy query,Integer limit);
 }
