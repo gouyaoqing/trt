@@ -133,4 +133,14 @@ public class MedicineServiceImpl implements MedicineService {
         QueryWrapper<Medicine> wrapper = new QueryWrapper<Medicine>(new Medicine().setCode(code));
         return medicineMapper.selectOne(wrapper);
     }
+
+    @Override
+    public int updateNameSpecification(Medicine medicine) {
+        UpdateWrapper<Medicine> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", medicine.getId());
+        wrapper.set("name_specification", medicine.getNameSpecification());
+
+        return medicineMapper.update(medicine, wrapper);
+
+    }
 }

@@ -1,8 +1,6 @@
 package com.trt.common.data.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -83,9 +81,21 @@ public class Custom {
     /**
      * 上级连锁Aid
      */
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
     private Long groupCompanyId;
     /**
      * 子连锁id
      */
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
     private Long subGroupCompanyId;
+
+    /**
+     * 集团板块
+     */
+    private String bloc;
+
+    /**
+     * 商业属性中文
+     */
+    private String category;
 }

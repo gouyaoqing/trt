@@ -23,4 +23,6 @@ public interface MedicineService {
     List<String> queryDepartment();
 
     Medicine findByCode(String code);
+
+    int updateNameSpecification(Medicine medicine);
 }

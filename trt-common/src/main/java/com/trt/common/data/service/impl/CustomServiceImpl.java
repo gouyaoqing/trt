@@ -136,17 +136,16 @@ public class CustomServiceImpl implements CustomService {
             return 0;
         }
 
-        if (custom.getGroupCompanyId() == null && custom.getSubGroupCompanyId() == null) {
-            return 0;
-        }
-
         UpdateWrapper<Custom> wrapper = new UpdateWrapper<>();
         wrapper.eq("id", custom.getId());
-        if (custom.getGroupCompanyId() != null) {
-            wrapper.set("group_company_id", custom.getGroupCompanyId());
+        wrapper.set("group_company_id", custom.getGroupCompanyId());
+        wrapper.set("sub_group_company_id", custom.getSubGroupCompanyId());
+        if (custom.getBusinessType() != null) {
+            wrapper.set("business_type", custom.getBusinessType());
         }
-        if (custom.getSubGroupCompanyId() != null) {
-            wrapper.set("sub_group_company_id", custom.getSubGroupCompanyId());
+
+        if (custom.getCategory() != null) {
+            wrapper.set("category", custom.getCategory());
         }
 
         return customMapper.update(custom, wrapper);

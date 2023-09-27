@@ -6,13 +6,11 @@ import com.trt.api.model.EasyExcelDemo;
 import com.trt.api.model.ExcelDemo;
 import com.trt.api.model.SaleDetailExcel;
 import com.trt.common.data.model.*;
-import com.trt.common.data.service.CustomService;
-import com.trt.common.data.service.GroupCompanyService;
-import com.trt.common.data.service.MedicineService;
-import com.trt.common.data.service.SubGroupCompanyService;
+import com.trt.common.data.service.*;
 import com.trt.common.utils.NumberUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -25,8 +23,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -42,6 +44,9 @@ public class InitCustomController {
 
     @Resource
     private SubGroupCompanyService subGroupCompanyService;
+
+    @Resource
+    private PharmacyService pharmacyService;
 
     @PostMapping("/excel/init-custom")
     public String initMedicine(@RequestParam("excelPath") String excelPath) {
@@ -145,37 +150,94 @@ public class InitCustomController {
     @PostMapping("/excel/import-custom-group-company")
     public String importCustomGroupCompany(@RequestParam("excelPath") String excelPath) {
         Map<String, Custom> customMap = customService.findAll().stream().collect(Collectors.toMap(Custom::getName, Function.identity(), (a, b) -> a));
-        Map<Long, SubGroupCompany> subGroupCompanyMap = subGroupCompanyService.findAll().stream().collect(Collectors.toMap(SubGroupCompany::getId, Function.identity(), (a, b) -> a));
+        Map<String, Pharmacy> pharmacyMap = pharmacyService.findAll().stream().collect(Collectors.toMap(Pharmacy::getName, Function.identity(), (a, b) -> a));
+
+        AtomicReference<String> lastGroupCompanyName = new AtomicReference<>();
+        AtomicReference<String> lastSubGroupCompanyName = new AtomicReference<>();
+        List<Custom> nullGroupCompanyCustoms = new CopyOnWriteArrayList<>();
 
         try {
             EasyExcel.read(excelPath, EasyExcelDemo.class, new PageReadListener<EasyExcelDemo>(dataList -> {
                 for (EasyExcelDemo demoData : dataList) {
                     try {
-                        String customName = demoData.getC();
-                        Long groupCompanyId = (StringUtils.isBlank(demoData.getQ()) || "NULL".equals(demoData.getQ())) ? null : Long.parseLong(demoData.getQ());
-                        Long subGroupCompanyId = (StringUtils.isBlank(demoData.getR()) || "NULL".equals(demoData.getR())) ? null : Long.parseLong(demoData.getR());
-                        Custom custom = customMap.get(customName);
+                        String customName = demoData.getA();
+                        String groupCompanyName = StringUtils.isBlank(demoData.getC()) ? null : demoData.getC();
+                        String subGroupCompanyName = StringUtils.isBlank(demoData.getE()) ? null : demoData.getE();
+                        String businessType = demoData.getB();
+                        String bloc = demoData.getG();
 
-                        if (groupCompanyId == null && subGroupCompanyId == null) {
-                            continue;
+//                        if (StringUtils.isBlank(subGroupCompanyName) && StringUtils.isNotBlank(groupCompanyName)) {
+//                            subGroupCompanyName = groupCompanyName;
+//                        }
+
+                        Custom custom = customMap.get(customName);
+                        if (StringUtils.isNotBlank(businessType)) {
+                            custom.setBusinessType(businessType);
                         }
+
                         if (custom == null) {
                             log.error(customName + "不存在");
                             continue;
                         }
 
-                        if (subGroupCompanyId != null && groupCompanyId == null) {
-                            SubGroupCompany subGroupCompany = subGroupCompanyMap.get(subGroupCompanyId);
-                            if (subGroupCompany == null) {
-                                log.error(customName + " subGroupCompanyId=" + subGroupCompanyId + " 找不到A");
-                            } else {
-                                groupCompanyId = subGroupCompany.getGroupCompanyId();
-                            }
-                        }
+//                        custom.setBloc(bloc);
 
-                        custom.setGroupCompanyId(groupCompanyId);
-                        custom.setSubGroupCompanyId(subGroupCompanyId);
+//                        if (pharmacyMap.containsKey(customName)) {
+//                            Pharmacy pharmacy = pharmacyMap.get(customName);
+//                            if (pharmacy.getGroupCompanyId() != null && pharmacy.getSubGroupCompanyId() != null) {
+//                                custom.setGroupCompanyId(pharmacy.getGroupCompanyId());
+//                                custom.setSubGroupCompanyId(pharmacy.getSubGroupCompanyId());
+//
+//                                customService.updateGroupCompanyId(custom);
+//                                continue;
+//                            }
+//                        }
+//                        if (groupCompanyName != null) {
+//                            if (groupCompanyName.equalsIgnoreCase(lastGroupCompanyName.get())) {
+//                                if (!nullGroupCompanyCustoms.isEmpty()) {
+//                                    //更新填充空缺的custom
+//                                    GroupCompany groupCompany = new GroupCompany().setName(groupCompanyName);
+//                                    groupCompanyService.getOrInsert(groupCompany);
+//
+//                                    SubGroupCompany subGroupCompany = new SubGroupCompany().setName(subGroupCompanyName).setGroupCompanyId(groupCompany.getId());
+//                                    subGroupCompanyService.getOrInsert(subGroupCompany);
+//
+//                                    nullGroupCompanyCustoms.forEach(nullGroupCompanyCustom -> {
+//                                        nullGroupCompanyCustom.setGroupCompanyId(groupCompany.getId());
+//                                        nullGroupCompanyCustom.setSubGroupCompanyId(subGroupCompany.getId());
+//                                        customService.updateGroupCompanyId(nullGroupCompanyCustom);
+//                                    });
+//                                    nullGroupCompanyCustoms.clear();
+//                                }
+//                            } else {
+//                                nullGroupCompanyCustoms.clear();
+//                            }
+//
+//                            lastGroupCompanyName.set(groupCompanyName);
+//                            lastSubGroupCompanyName.set(subGroupCompanyName);
+//                        } else {
+//                            nullGroupCompanyCustoms.add(custom);
+//                        }
+
+
+//                        if (StringUtils.isNotBlank(groupCompanyName)) {
+//                            GroupCompany groupCompany = new GroupCompany().setName(groupCompanyName);
+//                            groupCompanyService.getOrInsert(groupCompany);
+//                            custom.setGroupCompanyId(groupCompany.getId());
+//                        } else {
+//                            custom.setGroupCompanyId(null);
+//                        }
+//
+//                        if (StringUtils.isNotBlank(subGroupCompanyName)) {
+//                            SubGroupCompany subGroupCompany = new SubGroupCompany().setName(subGroupCompanyName).setGroupCompanyId(custom.getGroupCompanyId());
+//                            subGroupCompanyService.getOrInsert(subGroupCompany);
+//                            custom.setSubGroupCompanyId(subGroupCompany.getId());
+//                        } else {
+//                            custom.setSubGroupCompanyId(null);
+//                        }
+
                         customService.updateGroupCompanyId(custom);
+
 //                        log.info("已更改 " + customName + " groupCompanyId=" + groupCompanyId + ",subGroupCompanyId=" + subGroupCompanyId);
 
                     } catch (Exception e) {
@@ -193,4 +255,64 @@ public class InitCustomController {
         return "success";
     }
 
+    @PostMapping("/excel/import-custom-group-company1")
+    public String importCustomGroupCompany1(@RequestParam("excelPath") String excelPath) {
+        Map<String, Custom> customMap = customService.findAll().stream().collect(Collectors.toMap(Custom::getName, Function.identity(), (a, b) -> a));
+
+        try {
+            EasyExcel.read(excelPath, EasyExcelDemo.class, new PageReadListener<EasyExcelDemo>(dataList -> {
+                for (EasyExcelDemo demoData : dataList) {
+                    try {
+                        String customName = demoData.getA();
+                        String businessType = StringUtils.isBlank(demoData.getB()) || demoData.getB().equalsIgnoreCase("null") ? null : demoData.getB();
+                        String businessTypeCha = StringUtils.isBlank(demoData.getC()) || demoData.getC().equalsIgnoreCase("null") ? null : demoData.getC();
+                        String groupCompanyName = StringUtils.isBlank(demoData.getD()) || demoData.getD().equalsIgnoreCase("null") ? null : demoData.getD();
+                        String subGroupCompanyName = StringUtils.isBlank(demoData.getE()) || demoData.getE().equalsIgnoreCase("null") ? null : demoData.getE();
+
+
+                        Custom custom = customMap.get(customName);
+
+                        if (custom == null) {
+                            log.error(customName + "不存在");
+                            continue;
+                        }
+
+                        custom.setBusinessType(businessType);
+//                        custom.setCategory(businessTypeCha);
+
+//                        if (groupCompanyName != null) {
+//                            GroupCompany groupCompany = new GroupCompany().setName(groupCompanyName);
+//                            groupCompanyService.getOrInsert(groupCompany);
+//                            custom.setGroupCompanyId(groupCompany.getId());
+//                        } else {
+//                            custom.setGroupCompanyId(null);
+//                        }
+//
+//                        if (subGroupCompanyName != null) {
+//                            SubGroupCompany subGroupCompany = new SubGroupCompany().setName(subGroupCompanyName).setGroupCompanyId(custom.getGroupCompanyId());
+//                            subGroupCompanyService.getOrInsertOrUpdate(subGroupCompany);
+//                            custom.setSubGroupCompanyId(subGroupCompany.getId());
+//                        } else {
+//                            custom.setSubGroupCompanyId(null);
+//                        }
+
+
+                        customService.updateBusinessTypeById(custom);
+
+//                        log.info("已更改 " + customName + " groupCompanyId=" + groupCompanyId + ",subGroupCompanyId=" + subGroupCompanyId);
+
+                    } catch (Exception e) {
+                        log.error("read excel error.{}", demoData, e);
+                    }
+
+                }
+            })).sheet().doRead();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+        log.info("done.");
+        return "success";
+    }
 }

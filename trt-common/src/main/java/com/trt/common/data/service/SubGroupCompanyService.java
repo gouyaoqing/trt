@@ -9,4 +9,6 @@ public interface SubGroupCompanyService {
     int getOrInsert(SubGroupCompany subGroupCompany) throws BusinessException;
 
     List<SubGroupCompany> findAll();
+
+    int getOrInsertOrUpdate(SubGroupCompany subGroupCompany) throws BusinessException;
 }

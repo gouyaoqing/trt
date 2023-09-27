@@ -48,7 +48,6 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
     @Override
     public void importByExcel(String excelPath, String excelName) {
         List<SaleDetailExcel> saleDetailExcels = readExcel(excelPath, excelName);
-
         saleDetailService.deleteByExcelName(excelName);
 
         saleDetailExcels.forEach(saleDetailExcel -> {
@@ -109,20 +108,49 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
 
         if (notExistCustom.length() > 0) {
             log.error("客户不存在。" + notExistCustom);
-            throw new IllegalAccessException("客户不存在" + notExistCustom);
+//            throw new IllegalAccessException("客户不存在" + notExistCustom);
         }
 
 
         saleDetailService.deleteByExcelName(excelName);
 
+        List<Medicine> medicines = medicineService.findAll();
+        Set<String> notExistNameSpecification = new HashSet<>();
+
         saleDetailData.forEach(saleDetailExcel -> {
             try {
                 Custom custom = customMap.get(saleDetailExcel.getCustom().getName().replace("（", "(").replace("）", ")"));
 
-                if (saleDetailExcel.getMedicine().getCode() == null) {
+                if (custom == null) {
                     return;
                 }
-                Medicine medicine = medicineService.findByCode(saleDetailExcel.getMedicine().getCode());
+
+                Medicine medicine;
+                if (saleDetailExcel.getMedicine().getCode() == null) {
+                    //匹配药品别名
+                    medicine = medicines.stream()
+                            .filter(m -> StringUtils.isNotBlank(m.getNameSpecification()) && m.getNameSpecification().equalsIgnoreCase(saleDetailExcel.getMedicine().getNameSpecification()))
+                            .findFirst().orElse(null);
+                } else {
+                    //匹配药品code
+                    medicine = medicineService.findByCode(saleDetailExcel.getMedicine().getCode());
+                    if (medicine != null) {
+                        medicine.setNameSpecification(saleDetailExcel.getMedicine().getNameSpecification());
+                    }
+                }
+
+                if (medicine == null) {
+                    if (!notExistNameSpecification.contains(saleDetailExcel.getMedicine().getCode() + " " + saleDetailExcel.getMedicine().getNameSpecification())) {
+                        log.error(saleDetailExcel.getMedicine().getCode() + " " + saleDetailExcel.getMedicine().getNameSpecification() + " is not exist");
+                        notExistNameSpecification.add(saleDetailExcel.getMedicine().getCode() + " " + saleDetailExcel.getMedicine().getNameSpecification());
+                    }
+                    return;
+                }
+
+
+                if (StringUtils.isNotBlank(medicine.getNameSpecification()) && medicine.getId() != null) {
+                    medicineService.updateNameSpecification(medicine);
+                }
 
                 MedicineBatch medicineBatch = new MedicineBatch()
                         .setMedicineId(medicine.getId())
@@ -170,13 +198,14 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
                             saleDetailExcel.setMedicineBatch(null);
 
                             Medicine medicine = new Medicine();
-                            medicine.setCode(data.getQ());
+                            medicine.setCode(data.getP());
+                            medicine.setNameSpecification(data.getO());
 
-                            saleDetailExcel.setSaleNum(new Double(Double.parseDouble(data.getM())).intValue())
-                                    .setSalePrice(Double.parseDouble(data.getK()))
-                                    .setSaleAmount(Double.parseDouble(data.getN()))
-                                    .setSaleDate(formatter.parse(data.getO()))
-                                    .setSaleAmountDouble(Double.parseDouble(data.getN()))
+                            saleDetailExcel.setSaleNum(new Double(Double.parseDouble(data.getK())).intValue())
+                                    .setSalePrice(Double.parseDouble(data.getI()))
+                                    .setSaleAmount(Double.parseDouble(data.getL()))
+                                    .setSaleDate(formatter.parse(data.getM()))
+                                    .setSaleAmountDouble(Double.parseDouble(data.getL()))
                                     .setMedicine(medicine)
                                     .setExcel(excelName);
                         }

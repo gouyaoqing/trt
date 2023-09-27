@@ -99,4 +99,10 @@ public class PharmacyServiceImpl implements PharmacyService {
 
         return pharmacyMapper.selectList(queryWrapper);
     }
+
+    @Override
+    public List<Pharmacy> findAll() {
+        QueryWrapper<Pharmacy> queryWrapper = new QueryWrapper<>();
+        return pharmacyMapper.selectList(queryWrapper);
+    }
 }

@@ -91,4 +91,8 @@ public class Medicine {
      * 防疫用药
      */
     private Boolean fangYi;
+    /**
+     * 名称规格
+     */
+    private String nameSpecification;
 }
