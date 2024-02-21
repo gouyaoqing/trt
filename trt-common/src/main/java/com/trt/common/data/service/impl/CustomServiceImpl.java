@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.CustomMapper;
 import com.trt.common.data.model.Custom;
+import com.trt.common.data.model.Dealer;
 import com.trt.common.data.model.Medicine;
 import com.trt.common.data.service.CustomService;
 import com.trt.common.data.service.SaleDetailService;
@@ -38,6 +39,15 @@ public class CustomServiceImpl implements CustomService {
         Custom dbCodeCustom = customMapper.selectOne(wrapper);
         if (dbCodeCustom != null) {
             custom.setId(dbCodeCustom.getId());
+
+            //填充社会统一代码
+            if (StringUtils.isBlank(custom.getSocietyCode())) {
+                UpdateWrapper<Custom> updateWrapper = new UpdateWrapper();
+                updateWrapper.set("society_code", custom.getSocietyCode());
+                updateWrapper.eq("id", custom.getId());
+
+                customMapper.update(custom, updateWrapper);
+            }
 
             if (!custom.getName().equals(dbCodeCustom.getName())) {
 
@@ -152,11 +162,55 @@ public class CustomServiceImpl implements CustomService {
     }
 
     @Override
+    public int updateGroupCompanyIdNew(Custom custom) {
+        if (custom.getId() == null) {
+            return 0;
+        }
+
+        UpdateWrapper<Custom> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", custom.getId());
+        wrapper.set("group_company_id_new", custom.getGroupCompanyIdNew());
+        wrapper.set("sub_group_company_id_new", custom.getSubGroupCompanyIdNew());
+
+        if (custom.getSocietyCode() != null) {
+            wrapper.set("society_code", custom.getSocietyCode());
+        }
+
+        return customMapper.update(custom, wrapper);
+    }
+
+    @Override
     public List<String> businessType() {
         QueryWrapper<Custom> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("DISTINCT business_type");
 
         List<Custom> customs = customMapper.selectList(queryWrapper);
         return customs.stream().filter(Objects::nonNull).map(Custom::getBusinessType).collect(Collectors.toList());
+    }
+
+    @Override
+    public int updateNameById(Custom custom) {
+        if (custom == null || custom.getId() == null) {
+            return 0;
+        }
+
+        UpdateWrapper<Custom> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", custom.getId());
+        wrapper.set("name", custom.getName());
+
+        return customMapper.update(custom, wrapper);
+    }
+
+    @Override
+    public int updateSocietyCodeById(Custom custom) {
+        if (custom == null || custom.getId() == null) {
+            return 0;
+        }
+
+        UpdateWrapper<Custom> wrapper = new UpdateWrapper<>();
+        wrapper.eq("id", custom.getId());
+        wrapper.set("society_code", custom.getSocietyCode());
+
+        return customMapper.update(custom, wrapper);
     }
 }

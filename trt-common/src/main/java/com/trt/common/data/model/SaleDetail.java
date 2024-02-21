@@ -10,7 +10,7 @@ import java.util.Date;
 
 @Data
 @Accessors(chain = true)
-@TableName("sale_detail_2023")
+@TableName("sale_detail_2024")
 /**
  * 销售明细
  */

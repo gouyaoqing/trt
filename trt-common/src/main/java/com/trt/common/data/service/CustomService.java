@@ -16,6 +16,12 @@ public interface CustomService {
 
     int updateGroupCompanyId(Custom custom);
 
+    int updateGroupCompanyIdNew(Custom custom);
+
     List<String> businessType();
+
+    int updateNameById(Custom custom);
+
+    int updateSocietyCodeById(Custom custom);
 
 }

@@ -1,6 +1,7 @@
 package com.trt.common.data.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.trt.common.data.exception.BusinessException;
 import com.trt.common.data.mapper.DealerMapper;
 import com.trt.common.data.model.Dealer;
@@ -28,6 +29,15 @@ public class DealerServiceImpl implements DealerService {
         Dealer dbDealer = dealerMapper.selectOne(wrapper);
         if (dbDealer != null) {
             dealer.setId(dbDealer.getId());
+
+            //填充社会统一代码
+            if (StringUtils.isBlank(dealer.getSocietyCode())) {
+                UpdateWrapper<Dealer> updateWrapper = new UpdateWrapper();
+                updateWrapper.set("society_code", dealer.getSocietyCode());
+                updateWrapper.eq("id", dealer.getId());
+
+                dealerMapper.update(dealer, updateWrapper);
+            }
             return 1;
         }
 

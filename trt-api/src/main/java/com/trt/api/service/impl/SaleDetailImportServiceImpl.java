@@ -108,6 +108,7 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
 
         if (notExistCustom.length() > 0) {
             log.error("客户不存在。" + notExistCustom);
+            return;
 //            throw new IllegalAccessException("客户不存在" + notExistCustom);
         }
 
@@ -126,10 +127,10 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
                 }
 
                 Medicine medicine;
-                if (saleDetailExcel.getMedicine().getCode() == null) {
+                if (StringUtils.isBlank(saleDetailExcel.getMedicine().getCode())) {
                     //匹配药品别名
                     medicine = medicines.stream()
-                            .filter(m -> StringUtils.isNotBlank(m.getNameSpecification()) && m.getNameSpecification().equalsIgnoreCase(saleDetailExcel.getMedicine().getNameSpecification()))
+                            .filter(m -> StringUtils.isNotBlank(m.getNameSpecification()) && m.getNameSpecification().equalsIgnoreCase(saleDetailExcel.getMedicine().getName() + saleDetailExcel.getMedicine().getSpecification()))
                             .findFirst().orElse(null);
                 } else {
                     //匹配药品code
@@ -140,9 +141,9 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
                 }
 
                 if (medicine == null) {
-                    if (!notExistNameSpecification.contains(saleDetailExcel.getMedicine().getCode() + " " + saleDetailExcel.getMedicine().getNameSpecification())) {
-                        log.error(saleDetailExcel.getMedicine().getCode() + " " + saleDetailExcel.getMedicine().getNameSpecification() + " is not exist");
-                        notExistNameSpecification.add(saleDetailExcel.getMedicine().getCode() + " " + saleDetailExcel.getMedicine().getNameSpecification());
+                    if (!notExistNameSpecification.contains(saleDetailExcel.getMedicine().getCode() + " " + saleDetailExcel.getMedicine().getName() + saleDetailExcel.getMedicine().getSpecification())) {
+                        log.error(saleDetailExcel.getMedicine().getCode() + " " + saleDetailExcel.getMedicine().getName() + saleDetailExcel.getMedicine().getSpecification() + " is not exist");
+                        notExistNameSpecification.add(saleDetailExcel.getMedicine().getCode() + " " + saleDetailExcel.getMedicine().getName() + saleDetailExcel.getMedicine().getSpecification());
                     }
                     return;
                 }
@@ -175,6 +176,7 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
             }
 
         });
+        log.error("产品不存在：" + String.join(",", notExistNameSpecification));
         log.error("done");
 
     }
@@ -200,6 +202,8 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
                             Medicine medicine = new Medicine();
                             medicine.setCode(data.getP());
                             medicine.setNameSpecification(data.getO());
+                            medicine.setName(data.getF());
+                            medicine.setSpecification(data.getG());
 
                             saleDetailExcel.setSaleNum(new Double(Double.parseDouble(data.getK())).intValue())
                                     .setSalePrice(Double.parseDouble(data.getI()))
@@ -237,7 +241,8 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
                                 .setCity(demoData.getDealerCity())
                                 .setCode(demoData.getDealerCode())
                                 .setName(demoData.getDealerName())
-                                .setLevel(NumberUtils.parse(demoData.getDealerLevel()));
+                                .setLevel(NumberUtils.parse(demoData.getDealerLevel()))
+                                .setSocietyCode(demoData.getDealerSocietyCode());
                         saleDetailExcel.setDealer(dealer);
 
                         Custom custom = new Custom()
@@ -246,7 +251,8 @@ public class SaleDetailImportServiceImpl implements SaleDetailImportService {
                                 .setCity(demoData.getCustomCity())
                                 .setCode(demoData.getCustomCode())
                                 .setName(demoData.getCustomName())
-                                .setBusinessType(demoData.getBusinessType());
+                                .setBusinessType(demoData.getBusinessType())
+                                .setSocietyCode(demoData.getCustomSocietyCode());
                         saleDetailExcel.setCustom(custom);
 
                         MedicineBatch medicineBatch = new MedicineBatch();

@@ -90,6 +90,17 @@ public class Custom {
     private Long subGroupCompanyId;
 
     /**
+     * 上级连锁Aid
+     */
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
+    private Long groupCompanyIdNew;
+    /**
+     * 子连锁id
+     */
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
+    private Long subGroupCompanyIdNew;
+
+    /**
      * 集团板块
      */
     private String bloc;

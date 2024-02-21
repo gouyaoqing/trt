@@ -37,4 +37,6 @@ public class ExcelDemo {
     private String huanCai;
     private String yuYao;
     private String businessType;
+    private String dealerSocietyCode;
+    private String customSocietyCode;
 }

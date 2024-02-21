@@ -60,4 +60,8 @@ public class Dealer implements Serializable {
      * 创建时间
      */
     private Date createTime;
+    /**
+     * 统一社会信用代码
+     */
+    private String societyCode;
 }
